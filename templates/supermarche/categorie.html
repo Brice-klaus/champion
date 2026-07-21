@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ categorie.nom }} — Le Champion{% endblock %}
+{% block description %}Découvrez tous les produits du rayon {{ categorie.nom }} chez Le Champion Supermarché.{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Fil d'ariane -->
+    <nav class="text-xs text-champion-400 dark:text-champion-300/60 mb-6 flex items-center gap-1.5">
+        <a href="{% url 'supermarche:accueil' %}" class="hover:text-champion-600" data-fr="Accueil" data-en="Home">Accueil</a>
+        <span>/</span>
+        <a href="{% url 'supermarche:raiyoncategorie' %}" class="hover:text-champion-600" data-fr="Rayons" data-en="Aisles">Rayons</a>
+        <span>/</span>
+        <span class="text-champion-700 dark:text-creme-100">{{ categorie.nom }}</span>
+    </nav>
+
+    <!-- En-tête du rayon -->
+    <div class="flex items-center gap-4 mb-8">
+        <span class="text-4xl leading-none">{{ categorie.icone|default:"🛒" }}</span>
+        <div>
+            <h1 class="font-display font-800 text-2xl md:text-3xl text-champion-900 dark:text-creme-100">
+                {{ categorie.nom }}
+            </h1>
+            {% if categorie.description %}
+            <p class="text-sm text-champion-500 dark:text-champion-300/70 mt-1">{{ categorie.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
+
+        <!-- ══════════ SIDEBAR — Filtres ══════════ -->
+        <aside class="lg:sticky lg:top-24 lg:self-start">
+            <form method="get" id="filtres-form" class="flex flex-col gap-6">
+
+                <!-- Sous-catégories -->
+                {% if sous_categories %}
+                <div>
+                    <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Sous-catégories" data-en="Subcategories">
+                        Sous-catégories
+                    </p>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="radio" name="sous_categorie" value="" class="accent-champion-500"
+                                   {% if not filtres_actifs.sous_categorie %}checked{% endif %}
+                                   onchange="this.form.submit()">
+                            <span data-fr="Tout voir" data-en="See all">Tout voir</span>
+                        </label>
+                        {% for sc in sous_categories %}
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="radio" name="sous_categorie" value="{{ sc.slug }}" class="accent-champion-500"
+                                   {% if filtres_actifs.sous_categorie == sc.slug %}checked{% endif %}
+                                   onchange="this.form.submit()">
+                            <span>{{ sc.nom }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Marques -->
+                {% if marques %}
+                <div class="pt-5 border-t border-champion-100 dark:border-champion-700/40">
+                    <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Marques" data-en="Brands">
+                        Marques
+                    </p>
+                    <select name="marque" onchange="this.form.submit()"
+                            class="w-full text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                        <option value="" data-fr="Toutes les marques" data-en="All brands">Toutes les marques</option>
+                        {% for nom, slug in marques %}
+                        <option value="{{ slug }}" {% if filtres_actifs.marque == slug %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <!-- Fourchette de prix -->
+                <div class="pt-5 border-t border-champion-100 dark:border-champion-700/40">
+                    <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Prix (FCFA)" data-en="Price (FCFA)">
+                        Prix (FCFA)
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <input type="number" name="prix_min" placeholder="Min" value="{{ filtres_actifs.prix_min|default:'' }}"
+                               class="w-full text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                        <span class="text-champion-300">—</span>
+                        <input type="number" name="prix_max" placeholder="Max" value="{{ filtres_actifs.prix_max|default:'' }}"
+                               class="w-full text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                    </div>
+                </div>
+
+                <!-- Flags -->
+                <div class="pt-5 border-t border-champion-100 dark:border-champion-700/40">
+                    <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Filtres" data-en="Filters">
+                        Filtres
+                    </p>
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" name="promo" value="1" class="accent-champion-500" {% if filtres_actifs.promo %}checked{% endif %}>
+                            <span data-fr="En promotion" data-en="On sale">En promotion</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" name="nouveau" value="1" class="accent-champion-500" {% if filtres_actifs.nouveau %}checked{% endif %}>
+                            <span data-fr="Nouveauté" data-en="New arrival">Nouveauté</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" name="local" value="1" class="accent-champion-500" {% if filtres_actifs.local %}checked{% endif %}>
+                            <span data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" name="bio" value="1" class="accent-champion-500" {% if filtres_actifs.bio %}checked{% endif %}>
+                            <span data-fr="Bio" data-en="Organic">Bio</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Conserver le tri actif lors de la soumission des filtres -->
+                {% if filtres_actifs.tri %}
+                <input type="hidden" name="tri" value="{{ filtres_actifs.tri }}">
+                {% endif %}
+
+                <div class="flex flex-col gap-2 pt-2">
+                    <button type="submit" class="w-full px-4 py-2.5 rounded-xl2 bg-champion-500 hover:bg-champion-600 text-creme-50 font-semibold text-sm transition-colors">
+                        <span data-fr="Appliquer" data-en="Apply">Appliquer</span>
+                    </button>
+                    {% if filtres_actifs %}
+                    <a href="{{ categorie.get_absolute_url }}" class="w-full text-center px-4 py-2.5 rounded-xl2 border border-champion-200 dark:border-champion-700 text-champion-600 dark:text-champion-300 font-semibold text-sm hover:bg-champion-50 dark:hover:bg-champion-800 transition-colors">
+                        <span data-fr="Réinitialiser" data-en="Reset">Réinitialiser</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </aside>
+
+        <!-- ══════════ CONTENU — Chips, tri, grille ══════════ -->
+        <div>
+
+            <!-- Puces de filtres actifs -->
+            <!-- Puces de filtres actifs -->
+        {% if filtres_actifs %}
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+            {% for cle, valeur in filtres_actifs.items %}
+                {% if cle != "tri" %}
+                <span class="chip-filtre inline-flex items-center gap-2 bg-champion-100 dark:bg-champion-800 text-champion-700 dark:text-champion-200 text-xs font-medium pl-3 pr-2 py-1.5 rounded-full"
+                    data-cle="{{ cle }}">
+                    <span>
+                        {% if cle == "sous_categorie" %}
+                            <span data-fr="Sous-catégorie" data-en="Subcategory">Sous-catégorie</span>: {{ valeur }}
+                        {% elif cle == "marque" %}
+                            <span data-fr="Marque" data-en="Brand">Marque</span>: {{ valeur }}
+                        {% elif cle == "prix_min" %}
+                            <span data-fr="Prix min" data-en="Min price">Prix min</span>: {{ valeur }} FCFA
+                        {% elif cle == "prix_max" %}
+                            <span data-fr="Prix max" data-en="Max price">Prix max</span>: {{ valeur }} FCFA
+                        {% elif cle == "promo" %}
+                            <span data-fr="En promotion" data-en="On sale">En promotion</span>
+                        {% elif cle == "nouveau" %}
+                            <span data-fr="Nouveauté" data-en="New arrival">Nouveauté</span>
+                        {% elif cle == "local" %}
+                            <span data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</span>
+                        {% elif cle == "bio" %}
+                            <span data-fr="Bio" data-en="Organic">Bio</span>
+                        {% else %}
+                            {{ cle }}: {{ valeur }}
+                        {% endif %}
+                    </span>
+                    <button type="button" class="chip-remove w-4 h-4 grid place-items-center rounded-full hover:bg-champion-500 hover:text-creme-50 transition-colors" aria-label="Retirer ce filtre">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </span>
+                {% endif %}
+            {% endfor %}
+
+    <button type="button" id="chips-reset" class="text-xs font-semibold text-champion-500 hover:underline ml-1" data-fr="Tout effacer" data-en="Clear all">
+        Tout effacer
+    </button>
+</div>
+{% endif %}
+
+            <!-- Barre de tri -->
+            <div class="flex items-center justify-between mb-5">
+                <p class="text-sm text-champion-400 dark:text-champion-300/60">
+                    {{ page_obj.paginator.count }}
+                    <span data-fr="produit{{ page_obj.paginator.count|pluralize }}" data-en="product{{ page_obj.paginator.count|pluralize }}">
+                        produit{{ page_obj.paginator.count|pluralize }}
+                    </span>
+                </p>
+                <form method="get" class="flex items-center gap-2">
+                    {% for cle, valeur in filtres_actifs.items %}
+                        {% if cle != "tri" %}<input type="hidden" name="{{ cle }}" value="{{ valeur }}">{% endif %}
+                    {% endfor %}
+                    <label for="tri" class="text-xs text-champion-400 dark:text-champion-300/60 hidden sm:inline" data-fr="Trier par" data-en="Sort by">Trier par</label>
+                    <select id="tri" name="tri" onchange="this.form.submit()"
+                            class="text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                        <option value="ordre" {% if filtres_actifs.tri == "ordre" or not filtres_actifs.tri %}selected{% endif %} data-fr="Pertinence" data-en="Relevance">Pertinence</option>
+                        <option value="nom_asc" {% if filtres_actifs.tri == "nom_asc" %}selected{% endif %} data-fr="Nom (A-Z)" data-en="Name (A-Z)">Nom (A-Z)</option>
+                        <option value="nom_desc" {% if filtres_actifs.tri == "nom_desc" %}selected{% endif %} data-fr="Nom (Z-A)" data-en="Name (Z-A)">Nom (Z-A)</option>
+                        <option value="prix_asc" {% if filtres_actifs.tri == "prix_asc" %}selected{% endif %} data-fr="Prix croissant" data-en="Price: low to high">Prix croissant</option>
+                        <option value="prix_desc" {% if filtres_actifs.tri == "prix_desc" %}selected{% endif %} data-fr="Prix décroissant" data-en="Price: high to low">Prix décroissant</option>
+                        <option value="nouveaute" {% if filtres_actifs.tri == "nouveaute" %}selected{% endif %} data-fr="Nouveautés" data-en="Newest">Nouveautés</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Grille produits (réutilise le partial existant) -->
+            {% if produits %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-5">
+                {% for produit in produits %}
+                {% include "supermarche/partials/product_card.html" with produit=produit %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav class="flex items-center justify-center gap-1.5 mt-10">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% for key, val in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}"
+                   class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">‹</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <span class="w-9 h-9 grid place-items-center rounded-full bg-champion-500 text-creme-50 text-sm font-semibold">{{ num }}</span>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <a href="?page={{ num }}{% for key, val in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}"
+                       class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% for key, val in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}"
+                   class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">›</a>
+                {% endif %}
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-20">
+                <p class="text-4xl mb-3">🔍</p>
+                <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Aucun produit ne correspond à ces filtres." data-en="No products match these filters.">
+                    Aucun produit ne correspond à ces filtres.
+                </p>
+                {% if filtres_actifs %}
+                <a href="{{ categorie.get_absolute_url }}" class="inline-block mt-4 text-sm font-semibold text-champion-500 hover:underline" data-fr="Réinitialiser les filtres" data-en="Reset filters">
+                    Réinitialiser les filtres
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+  document.querySelectorAll('.chip-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cle = btn.closest('.chip-filtre').dataset.cle;
+      const params = new URLSearchParams(window.location.search);
+      params.delete(cle);
+      params.delete('page');
+      window.location.search = params.toString();
+    });
+  });
+
+  const resetBtn = document.getElementById('chips-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      window.location.href = window.location.pathname;
+    });
+  }
+</script>
+{% endblock %}

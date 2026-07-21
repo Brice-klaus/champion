@@ -1,0 +1,48 @@
+
+
+
+# ============================================================
+#  requirements.txt — Le Champion Supermarché Togo
+# ============================================================
+Django>=5.0,<6.0
+Pillow>=10.0          # ImageField
+django-extensions     # shell_plus, etc.
+django-environ        # variables d'environnement
+whitenoise            # fichiers statiques en production
+gunicorn              # serveur WSGI production
+psycopg2-binary       # PostgreSQL (recommandé en prod)
+django-ckeditor       # éditeur WYSIWYG pour les articles/recettes
+django-cleanup        # suppression automatique des fichiers orphelins
+
+
+
+# ==============================================================
+#  requirements.txt — Le Champion Supermarché Togo
+# ==============================================================
+
+# ── Framework ──────────────────────────────────────────────
+Django>=5.0,<5.2
+
+# ── Base de données ─────────────────────────────────────────
+psycopg2-binary>=2.9          # Driver PostgreSQL
+
+# ── Variables d'environnement ───────────────────────────────
+django-environ>=0.11          # Lecture .env
+
+# ── Fichiers statiques ──────────────────────────────────────
+whitenoise>=6.6               # Servir les statiques sans nginx (prod)
+
+# ── Serveur WSGI production ─────────────────────────────────
+gunicorn>=21.2
+
+# ── Images ──────────────────────────────────────────────────
+Pillow>=10.2                  # Traitement des ImageField
+
+# ── Utilitaires Django ──────────────────────────────────────
+django-extensions>=3.2        # shell_plus, graph_models, etc.
+django-cleanup>=8.0           # Suppression des fichiers orphelins après delete
+
+# ── Développement uniquement ────────────────────────────────
+# Décommenter pour le dev local :
+# django-debug-toolbar>=4.3
+# ipython>=8.0

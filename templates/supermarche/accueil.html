@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Rayon — Le Champion{% endblock %}
+
+{% block content %}
+<section class="notranslate max-w-7xl mx-auto px-4 py-10">
+    <div class="mb-6">
+        <h2 class="font-display font-bold text-2xl text-gray-900">
+            <span data-fr="Nos rayons" data-en="Our aisles">Nos rayons</span>
+        </h2>
+        <p class="text-sm text-gray-500">
+            <span data-fr="Parcourez le catalogue par catégorie"
+                  data-en="Browse the catalogue by category">
+                Parcourez le catalogue par catégorie
+            </span>
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for categorie in categories %}
+            {% include "supermarche/partials/_carte_rayon.html" %}
+        {% empty %}
+            <p class="col-span-full text-sm text-gray-400">
+                <span data-fr="Aucun rayon disponible pour le moment."
+                      data-en="No aisles available right now.">
+                    Aucun rayon disponible pour le moment.
+                </span>
+            </p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

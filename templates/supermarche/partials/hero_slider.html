@@ -1,0 +1,131 @@
+{% comment %}
+  Hero slider — attend `hero_slides` (queryset BanniereHero) dans le contexte.
+  Champs du modèle utilisés : titre, sous_titre, image_desktop, image_mobile,
+  texte_bouton, lien_bouton, couleur_texte.
+{% endcomment %}
+
+<section class="relative overflow-hidden bg-champion-500 dark:bg-champion-800">
+
+  <!-- Formes organiques flottantes (motif signature) -->
+  <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-mangue-500/20 blur-2xl animate-floaty"></div>
+  <div class="pointer-events-none absolute -bottom-24 -left-10 w-80 h-80 rounded-full bg-champion-300/20 blur-2xl animate-floaty" style="animation-delay:1.5s"></div>
+
+  <div id="hero-slider" class="relative">
+
+    {% for slide in hero_slides %}
+    <div class="hero-slide {% if forloop.first %}block{% else %}hidden{% endif %} relative"
+         data-index="{{ forloop.counter0 }}">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 items-center gap-10 py-16 md:py-24 lg:py-28 min-h-[520px]">
+
+        <!-- Texte -->
+        <div class="order-2 lg:order-1" style="color: {{ slide.couleur_texte|default:'#FFFFFF' }};">
+          <h5 class="font-display font-800 text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-5 animate-fadeUp" style="animation-delay:.1s">
+            {{ slide.titre }}
+          </h5>
+          {% if slide.sous_titre %}
+          <p class="text-base md:text-lg max-w-md mb-8 opacity-90 animate-fadeUp" style="animation-delay:.2s">
+            {{ slide.sous_titre }}
+          </p>
+          {% endif %}
+          <div class="flex flex-wrap gap-3 animate-fadeUp" style="animation-delay:.3s">
+            {% if slide.texte_bouton %}
+            <a href="{{ slide.lien_bouton|default:'#' }}"
+               class="px-6 py-3.5 rounded-xl2 bg-mangue-500 hover:bg-mangue-600 text-champion-900 font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-soft">
+              {{ slide.texte_bouton }}
+            </a>
+            {% endif %}
+            <a href="#promotions"
+               class="px-6 py-3.5 rounded-xl2 border font-semibold text-sm transition-all duration-300 hover:bg-white/10"
+               style="border-color: color-mix(in srgb, {{ slide.couleur_texte|default:'#FFFFFF' }} 40%, transparent);">
+              Voir les promos
+            </a>
+          </div>
+        </div>
+
+        <!-- Image (desktop / mobile) -->
+        <div class="order-1 lg:order-2 relative">
+          <div class="relative aspect-[4/3] rounded-xl3 overflow-hidden shadow-soft animate-fadeUp" style="animation-delay:.15s">
+            {% if slide.image_desktop %}
+            <picture>
+              {% if slide.image_mobile %}
+              <source media="(max-width: 767px)" srcset="{{ slide.image_mobile.url }}">
+              {% endif %}
+              <img src="{{ slide.image_desktop.url }}" alt="{{ slide.titre }}" class="w-full h-full object-cover">
+            </picture>
+            {% else %}
+            <div class="w-full h-full bg-champion-300/40 grid place-items-center text-champion-50/70 text-sm">
+              Image
+            </div>
+            {% endif %}
+          </div>
+          {% comment %} <div class="absolute -bottom-5 -left-5 w-24 h-24 rounded-full bg-mangue-500 grid place-items-center font-display font-800 text-champion-900 text-center text-xs leading-tight rotate-[-8deg] shadow-soft animate-floaty">
+            Fraîcheur<br>du jour
+          </div> {% endcomment %}
+        </div>
+
+      </div>
+    </div>
+    {% empty %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center text-creme-50">
+      <h1 class="font-display font-800 text-4xl">Le Champion Supermarché Togo</h1>
+      <p class="mt-3 text-champion-50/80">Vos courses, en toute simplicité.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Vague festonnée (motif "auvent de marché") -->
+  <div class="scallop-bottom h-6 bg-creme-50 dark:bg-champion-900 relative -mb-px"></div>
+
+  {% if hero_slides|length > 1 %}
+  <!-- Pagination -->
+  <div class="absolute bottom-9 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+    {% for slide in hero_slides %}
+    <button class="hero-dot w-2.5 h-2.5 rounded-full bg-creme-50/40 hover:bg-creme-50/70 transition-all data-[active=true]:w-6 data-[active=true]:bg-mangue-500"
+            data-index="{{ forloop.counter0 }}"
+            {% if forloop.first %}data-active="true"{% endif %}
+            aria-label="Aller à la diapositive {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+
+  <!-- Flèches -->
+  <button id="hero-prev" class="hidden md:grid place-items-center absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-creme-50/15 hover:bg-creme-50/25 text-creme-50 backdrop-blur-sm transition-colors z-10" aria-label="Précédent">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <button id="hero-next" class="hidden md:grid place-items-center absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-creme-50/15 hover:bg-creme-50/25 text-creme-50 backdrop-blur-sm transition-colors z-10" aria-label="Suivant">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+  </button>
+  {% endif %}
+</section>
+
+{% if hero_slides|length > 1 %}
+<script>
+(() => {
+  const slides = document.querySelectorAll('#hero-slider .hero-slide');
+  const dots = document.querySelectorAll('.hero-dot');
+  let current = 0;
+  let timer;
+
+  function show(index) {
+    slides.forEach(s => s.classList.add('hidden'));
+    slides[index].classList.remove('hidden');
+    dots.forEach(d => d.removeAttribute('data-active'));
+    dots[index].setAttribute('data-active', 'true');
+    current = index;
+  }
+
+  function next() { show((current + 1) % slides.length); }
+  function prev() { show((current - 1 + slides.length) % slides.length); }
+
+  function restart() {
+    clearInterval(timer);
+    timer = setInterval(next, 6000);
+  }
+
+  document.getElementById('hero-next')?.addEventListener('click', () => { next(); restart(); });
+  document.getElementById('hero-prev')?.addEventListener('click', () => { prev(); restart(); });
+  dots.forEach(dot => dot.addEventListener('click', () => { show(+dot.dataset.index); restart(); }));
+
+  restart();
+})();
+</script>
+{% endif %}

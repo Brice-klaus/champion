@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ magasin.nom }} — Le Champion Supermarché{% endblock %}
+{% block description %}{{ magasin.nom }}, {{ magasin.adresse }}, {{ magasin.ville.nom }}. Horaires, services et itinéraire.{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Fil d'ariane -->
+    <nav class="text-xs text-champion-400 dark:text-champion-300/60 mb-6 flex items-center gap-1.5 flex-wrap">
+        <a href="{% url 'supermarche:accueil' %}" class="hover:text-champion-600" data-fr="Accueil" data-en="Home">Accueil</a>
+        <span>/</span>
+        <a href="{% url 'supermarche:magasin_liste' %}" class="hover:text-champion-600" data-fr="Magasins" data-en="Stores">Magasins</a>
+        <span>/</span>
+        <span class="text-champion-700 dark:text-creme-100">{{ magasin.nom }}</span>
+    </nav>
+
+    <!-- ══════════ EN-TÊTE ══════════ -->
+    <div class="relative rounded-xl3 overflow-hidden mb-8 aspect-[16/6] bg-creme-100 dark:bg-champion-900/40">
+        {% if magasin.photo %}
+        <img src="{{ magasin.photo.url }}" alt="{{ magasin.nom }}" class="w-full h-full object-cover">
+        {% else %}
+        <div class="w-full h-full grid place-items-center text-6xl text-champion-200">🏬</div>
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-champion-900/80 via-champion-900/10 to-transparent flex items-end p-6 md:p-8">
+            <div>
+                {% if magasin.est_ouvert_24h %}
+                <span class="inline-block bg-mangue-500 text-champion-900 text-xs font-bold px-3 py-1 rounded-full mb-3">
+                    <span data-fr="Ouvert 24h/24" data-en="Open 24/7">Ouvert 24h/24</span>
+                </span>
+                {% endif %}
+                <h1 class="font-display font-800 text-2xl md:text-4xl text-creme-50">{{ magasin.nom }}</h1>
+                <p class="text-creme-50/90 text-sm mt-1">{{ magasin.ville.nom }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+        <!-- ══════════ COLONNE PRINCIPALE ══════════ -->
+        <div class="lg:col-span-2 flex flex-col gap-10">
+
+            <!-- Infos pratiques -->
+            <div class="grid sm:grid-cols-2 gap-5">
+                <div class="flex items-start gap-3 p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-champion-500 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                    </svg>
+                    <div>
+                        <p class="text-xs text-champion-400 dark:text-champion-300/60 mb-0.5" data-fr="Adresse" data-en="Address">Adresse</p>
+                        <p class="text-sm text-champion-900 dark:text-creme-100">{{ magasin.adresse }}, {{ magasin.ville.nom }}</p>
+                    </div>
+                </div>
+
+                {% if magasin.horaires %}
+                <div class="flex items-start gap-3 p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-champion-500 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    <div>
+                        <p class="text-xs text-champion-400 dark:text-champion-300/60 mb-0.5" data-fr="Horaires" data-en="Opening hours">Horaires</p>
+                        <p class="text-sm text-champion-900 dark:text-creme-100">{{ magasin.horaires }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if magasin.telephone %}
+                <div class="flex items-start gap-3 p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-champion-500 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106a2.25 2.25 0 0 0-2.318.881l-.573.765a11.25 11.25 0 0 1-6.201-6.202l.765-.573a2.25 2.25 0 0 0 .881-2.318L6.573 3.852A1.125 1.125 0 0 0 5.482 3H4.125A1.875 1.875 0 0 0 2.25 4.875v1.875Z"/>
+                    </svg>
+                    <div>
+                        <p class="text-xs text-champion-400 dark:text-champion-300/60 mb-0.5" data-fr="Téléphone" data-en="Phone">Téléphone</p>
+                        <a href="tel:{{ magasin.telephone }}" class="text-sm text-champion-900 dark:text-creme-100 hover:text-champion-600">{{ magasin.telephone }}</a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if magasin.email %}
+                <div class="flex items-start gap-3 p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-champion-500 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
+                    </svg>
+                    <div>
+                        <p class="text-xs text-champion-400 dark:text-champion-300/60 mb-0.5" data-fr="Email" data-en="Email">Email</p>
+                        <a href="mailto:{{ magasin.email }}" class="text-sm text-champion-900 dark:text-creme-100 hover:text-champion-600">{{ magasin.email }}</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Services -->
+            {% if magasin.services.all %}
+            <div>
+                <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Services disponibles" data-en="Available services">
+                    Services disponibles
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    {% for service in magasin.services.all %}
+                    <span class="inline-flex items-center gap-1.5 bg-champion-50 dark:bg-champion-800 text-champion-700 dark:text-champion-200 text-sm px-3 py-1.5 rounded-full border border-champion-100 dark:border-champion-700/40">
+                        {% if service.icone %}<span>{{ service.icone }}</span>{% endif %}
+                        {{ service.nom }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Carte Mapbox -->
+            {% if magasin.latitude and magasin.longitude %}
+            <div>
+                <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Localisation" data-en="Location">
+                    Localisation
+                </p>
+                <div id="magasin-detail-map"
+                    data-lat="{{ magasin.latitude|stringformat:'f' }}"
+                    data-lng="{{ magasin.longitude|stringformat:'f' }}"
+                    data-nom="{{ magasin.nom }}"
+                    data-adresse="{{ magasin.adresse|escapejs }}"
+                    data-token="{{ mapbox_token }}"
+                    class="w-full h-72 md:h-96 rounded-xl3 overflow-hidden border border-champion-100 dark:border-champion-700/40"></div>
+
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ magasin.latitude }},{{ magasin.longitude }}"
+                       target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl2 bg-champion-500 hover:bg-champion-600 text-creme-50 font-semibold text-sm transition-colors">
+                        <span data-fr="Itinéraire (Google Maps)" data-en="Directions (Google Maps)">Itinéraire (Google Maps)</span>
+                    </a>
+                    <a href="https://waze.com/ul?ll={{ magasin.latitude }},{{ magasin.longitude }}&navigate=yes"
+                       target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl2 border border-champion-200 dark:border-champion-700 text-champion-600 dark:text-champion-300 font-semibold text-sm hover:bg-champion-50 dark:hover:bg-champion-800 transition-colors">
+                        <span data-fr="Ouvrir dans Waze" data-en="Open in Waze">Ouvrir dans Waze</span>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Équipe -->
+            {% if equipe_visible %}
+            <div>
+                <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Notre équipe" data-en="Our team">
+                    Notre équipe
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {% for membre in equipe_visible %}
+                    <div class="flex flex-col items-center text-center gap-2 p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                        <div class="w-16 h-16 rounded-full bg-champion-100 dark:bg-champion-700 overflow-hidden grid place-items-center">
+                            {% if membre.photo %}
+                            <img src="{{ membre.photo.url }}" alt="{{ membre.nom }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <span class="font-display font-700 text-lg text-champion-500">{{ membre.nom|slice:":1" }}</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm font-medium text-champion-900 dark:text-creme-100">{{ membre.nom }}</p>
+                        {% if membre.poste %}
+                        <p class="text-xs text-champion-400 dark:text-champion-300/60">{{ membre.poste }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Avis clients -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100" data-fr="Avis clients" data-en="Customer reviews">
+                        Avis clients
+                    </p>
+                    {% if note_moyenne %}
+                    <div class="flex items-center gap-1.5">
+                        <div class="flex gap-0.5 text-mangue-500">
+                            {% for i in "12345" %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {% if forloop.counter <= note_moyenne %}fill-current{% else %}fill-champion-100 dark:fill-champion-700{% endif %}" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            {% endfor %}
+                        </div>
+                        <span class="text-sm font-semibold text-champion-900 dark:text-creme-100">{{ note_moyenne|floatformat:1 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if avis_magasin %}
+                <div class="flex flex-col gap-4">
+                    {% for avis in avis_magasin %}
+                    <div class="p-4 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-champion-500 grid place-items-center font-display font-700 text-xs text-creme-50">
+                                    {{ avis.nom_client|slice:":1" }}
+                                </div>
+                                <span class="text-sm font-medium text-champion-900 dark:text-creme-100">{{ avis.nom_client }}</span>
+                            </div>
+                            <div class="flex gap-0.5 text-mangue-500">
+                                {% for i in "12345" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 {% if forloop.counter <= avis.note %}fill-current{% else %}fill-champion-100 dark:fill-champion-700{% endif %}" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-sm text-champion-600 dark:text-creme-100/80 leading-relaxed">{{ avis.commentaire }}</p>
+                        <p class="text-xs text-champion-300 dark:text-champion-400 mt-2">{{ avis.created_at|date:"d M Y" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Aucun avis pour ce magasin pour le moment." data-en="No reviews for this store yet.">
+                    Aucun avis pour ce magasin pour le moment.
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ══════════ SIDEBAR ══════════ -->
+        <aside class="flex flex-col gap-8">
+
+            <!-- Promotions locales -->
+            {% if promotions_locales %}
+            <div>
+                <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Promotions dans ce magasin" data-en="Deals at this store">
+                    Promotions dans ce magasin
+                </p>
+                <div class="flex flex-col gap-3">
+                    {% for promo in promotions_locales %}
+                    <a href="{% url 'supermarche:promotion_detail' promo.slug %}"
+                       class="flex gap-3 p-3 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 hover:shadow-soft dark:hover:shadow-softdark transition-shadow">
+                        <div class="w-16 h-16 flex-none rounded-lg overflow-hidden bg-champion-100 dark:bg-champion-700">
+                            {% if promo.image_banniere %}
+                            <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre }}" class="w-full h-full object-cover">
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-col justify-center min-w-0">
+                            <p class="text-sm font-medium text-champion-900 dark:text-creme-100 line-clamp-2">{{ promo.titre }}</p>
+                            {% if promo.date_fin %}
+                            <p class="text-xs text-champion-400 dark:text-champion-300/60 mt-1">
+                                <span data-fr="Jusqu'au {{ promo.date_fin|date:'d M' }}" data-en="Until {{ promo.date_fin|date:'M d' }}">
+                                    Jusqu'au {{ promo.date_fin|date:"d M" }}
+                                </span>
+                            </p>
+                            {% endif %}
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Autres magasins -->
+            {% if autres_magasins %}
+            <div>
+                <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Autres magasins" data-en="Other stores">
+                    Autres magasins
+                </p>
+                <div class="flex flex-col gap-3">
+                    {% for autre in autres_magasins %}
+                    <a href="{% url 'supermarche:magasin_detail' autre.slug %}"
+                       class="flex items-center gap-3 p-3 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 hover:shadow-soft dark:hover:shadow-softdark transition-shadow">
+                        <div class="w-12 h-12 flex-none rounded-lg overflow-hidden bg-champion-100 dark:bg-champion-700 grid place-items-center">
+                            {% if autre.photo %}
+                            <img src="{{ autre.photo.url }}" alt="{{ autre.nom }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <span class="text-lg">🏬</span>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-champion-900 dark:text-creme-100 truncate">{{ autre.nom }}</p>
+                            <p class="text-xs text-champion-400 dark:text-champion-300/60">{{ autre.ville.nom }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- CTA retour liste -->
+            <a href="{% url 'supermarche:magasin_liste' %}"
+               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl2 border border-champion-200 dark:border-champion-700 text-champion-600 dark:text-champion-300 font-semibold text-sm hover:bg-champion-50 dark:hover:bg-champion-800 transition-colors">
+                <span data-fr="Voir tous les magasins" data-en="See all stores">Voir tous les magasins</span>
+            </a>
+        </aside>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+<script src="{% static 'supermarche/js/magasin-detail-map.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nos magasins — Le Champion Supermarché Togo{% endblock %}
+{% block description %}Retrouvez tous les magasins Le Champion au Togo : adresses, horaires et coordonnées.{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Fil d'ariane -->
+    <nav class="text-xs text-champion-400 dark:text-champion-300/60 mb-6 flex items-center gap-1.5">
+        <a href="{% url 'supermarche:accueil' %}" class="hover:text-champion-600" data-fr="Accueil" data-en="Home">Accueil</a>
+        <span>/</span>
+        <span class="text-champion-700 dark:text-creme-100" data-fr="Magasins" data-en="Stores">Magasins</span>
+    </nav>
+
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+        <div>
+            <h1 class="font-display font-800 text-2xl md:text-3xl text-champion-900 dark:text-creme-100" data-fr="Nos magasins" data-en="Our stores">
+                Nos magasins
+            </h1>
+            <p class="text-sm text-champion-500 dark:text-champion-300/70 mt-1">
+                {{ nb_magasins }}
+                <span data-fr="magasin{{ nb_magasins|pluralize }} au Togo" data-en="store{{ nb_magasins|pluralize }} in Togo">
+                    magasin{{ nb_magasins|pluralize }} au Togo
+                </span>
+            </p>
+        </div>
+
+        <!-- Filtre ville -->
+        <form method="get" class="flex items-center gap-2">
+            <label for="ville" class="text-xs text-champion-400 dark:text-champion-300/60 hidden sm:inline" data-fr="Filtrer par ville" data-en="Filter by city">
+                Filtrer par ville
+            </label>
+            <select id="ville" name="ville" onchange="this.form.submit()"
+                    class="text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                <option value="" data-fr="Toutes les villes" data-en="All cities">Toutes les villes</option>
+                {% for ville in villes %}
+                <option value="{{ ville.slug }}" {% if ville_active == ville.slug %}selected{% endif %}>{{ ville.nom }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <!-- ══════════ CARTE — tous les magasins actifs ══════════ -->
+    <div id="magasins-map"
+         data-token="{{ mapbox_token }}"
+         data-magasins='{{ magasins_json|default:"[]" }}'
+         class="w-full h-80 md:h-[420px] rounded-xl3 overflow-hidden border border-champion-100 dark:border-champion-700/40 mb-10"></div>
+
+    <!-- ══════════ GRILLE DES MAGASINS ══════════ -->
+    {% if magasins %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for magasin in magasins %}
+        <div id="magasin-card-{{ magasin.pk }}"
+             class="magasin-card flex flex-col rounded-xl3 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 overflow-hidden transition-shadow hover:shadow-soft dark:hover:shadow-softdark scroll-mt-24">
+
+            <div class="relative aspect-[16/9] bg-creme-100 dark:bg-champion-900/40 overflow-hidden">
+                {% if magasin.photo %}
+                <img src="{{ magasin.photo.url }}" alt="{{ magasin.nom }}" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full grid place-items-center text-4xl text-champion-200">🏬</div>
+                {% endif %}
+
+                {% if magasin.est_ouvert_24h %}
+                <span class="absolute top-3 left-3 bg-mangue-500 text-champion-900 text-xs font-bold px-2.5 py-1 rounded-full">
+                    <span data-fr="Ouvert 24h/24" data-en="Open 24/7">Ouvert 24h/24</span>
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col gap-2 p-5 flex-1">
+                <h3 class="font-display font-700 text-base text-champion-900 dark:text-creme-100">
+                    {{ magasin.nom }}
+                </h3>
+
+                <p class="text-sm text-champion-500 dark:text-champion-300/70 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                    </svg>
+                    <span>{{ magasin.adresse }}, {{ magasin.ville.nom }}</span>
+                </p>
+
+                {% if magasin.horaires %}
+                <p class="text-sm text-champion-500 dark:text-champion-300/70 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-none mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    <span>{{ magasin.horaires }}</span>
+                </p>
+                {% endif %}
+
+                {% if magasin.telephone %}
+                <p class="text-sm text-champion-500 dark:text-champion-300/70 flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106a2.25 2.25 0 0 0-2.318.881l-.573.765a11.25 11.25 0 0 1-6.201-6.202l.765-.573a2.25 2.25 0 0 0 .881-2.318L6.573 3.852A1.125 1.125 0 0 0 5.482 3H4.125A1.875 1.875 0 0 0 2.25 4.875v1.875Z"/>
+                    </svg>
+                    <a href="tel:{{ magasin.telephone }}" class="hover:text-champion-600">{{ magasin.telephone }}</a>
+                </p>
+                {% endif %}
+
+                <div class="flex gap-2 mt-auto pt-4">
+                    <a href="{% url 'supermarche:magasin_detail' magasin.slug %}"
+                       class="flex-1 text-center px-4 py-2.5 rounded-xl2 bg-champion-500 hover:bg-champion-600 text-creme-50 font-semibold text-sm transition-colors">
+                        <span data-fr="Voir la fiche" data-en="View store">Voir la fiche</span>
+                    </a>
+                    {% if magasin.latitude and magasin.longitude %}
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ magasin.latitude }},{{ magasin.longitude }}"
+                       target="_blank" rel="noopener"
+                       class="grid place-items-center w-11 h-11 flex-none rounded-xl2 border border-champion-200 dark:border-champion-700 hover:bg-champion-50 dark:hover:bg-champion-800 transition-colors"
+                       aria-label="Itinéraire">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-600 dark:text-champion-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20">
+        <p class="text-4xl mb-3">🏬</p>
+        <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Aucun magasin trouvé pour cette ville." data-en="No store found for this city.">
+            Aucun magasin trouvé pour cette ville.
+        </p>
+        <a href="{% url 'supermarche:magasin_liste' %}" class="inline-block mt-4 text-sm font-semibold text-champion-500 hover:underline" data-fr="Voir tous les magasins" data-en="See all stores">
+            Voir tous les magasins
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+<script src="{% static 'supermarche/js/magasins-liste-map.js' %}"></script>
+{% endblock %}

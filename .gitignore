@@ -1,0 +1,63 @@
+# ==============================================================
+#  .gitignore — Le Champion Supermarché Togo
+# ==============================================================
+
+# ── Environnement Python ─────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+pip-selfcheck.json
+
+# ── Django ───────────────────────────────────────────────────
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# !! NE JAMAIS VERSIONNER !!
+.env
+.env.*
+!.env.example
+
+# Collectstatic output
+staticfiles/
+/static/collected/
+
+# Uploads utilisateurs (médias)
+/media/
+!/media/.gitkeep
+
+# Logs applicatifs
+/logs/
+!/logs/.gitkeep
+
+# Migrations auto-générées (décommenter si on préfère les ignorer)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# ── IDEs & OS ────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Tests & couverture ───────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ── Distribution / packaging ─────────────────────────────────
+dist/
+build/
+*.egg-info/

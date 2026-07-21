@@ -1,0 +1,18 @@
+Bonjour {{ reservation.client_nom }},
+
+Votre réservation {{ reservation.numero }} a bien été enregistrée.
+
+Mode : {{ reservation.get_type_recuperation_display }}
+{% if reservation.magasin %}Magasin : {{ reservation.magasin.nom }}
+{% endif %}{% if reservation.adresse_livraison %}Adresse : {{ reservation.adresse_livraison }}
+{% endif %}Créneau souhaité : {{ reservation.creneau_souhaite|date:"d/m/Y à H:i" }}
+
+Articles :
+{% for ligne in reservation.lignes.all %}- {{ ligne.quantite }} x {{ ligne.produit.nom }} — {{ ligne.sous_total }} FCFA
+{% endfor %}
+Total estimé : {{ reservation.total_estime }} FCFA
+
+Le paiement s'effectue au retrait ou à la livraison. Notre équipe vous contactera pour confirmer la disponibilité.
+
+À bientôt,
+L'équipe Le Champion Supermarché

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ catalogue.titre }} — Le Champion{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+  <!-- Barre supérieure -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6 reveal">
+    <div>
+      <a href="{% url 'supermarche:catalogues_liste' %}" class="inline-flex items-center gap-1 text-xs font-semibold text-champion-500 hover:gap-2 transition-all mb-1" data-fr="Tous les catalogues" data-en="All catalogs">
+        ← <span data-fr="Tous les catalogues" data-en="All catalogs">Tous les catalogues</span>
+      </a>
+      <h1 class="font-display font-800 text-xl md:text-2xl">{{ catalogue.titre }}</h1>
+      <span class="text-xs text-champion-400">{{ catalogue.mois|date:"F Y"|capfirst }}</span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-medium text-champion-600 dark:text-creme-100/70">
+        <span id="page-courante">1</span> / <span id="page-totale">{{ catalogue.pages.count }}</span>
+      </span>
+      <a href="{{ catalogue.fichier.url }}" download class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl2 bg-mangue-500 hover:bg-mangue-600 text-champion-900 font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 12l4.5 4.5m0 0 4.5-4.5M12 16.5V3"/></svg>
+        <span data-fr="Télécharger le PDF" data-en="Download PDF">Télécharger le PDF</span>
+      </a>
+    </div>
+  </div>
+
+  {% if catalogue.pages.all %}
+  <!-- Visionneuse -->
+  <div class="reveal relative rounded-xl3 bg-champion-50 dark:bg-champion-800/40 p-4 md:p-8">
+
+    <div class="flex items-center justify-center gap-3 md:gap-6">
+      <button id="btn-prev" aria-label="Page précédente" class="w-10 h-10 flex-none grid place-items-center rounded-full bg-white dark:bg-champion-700 shadow-sm hover:shadow-soft transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+
+      <div id="page-viewport" class="relative w-full max-w-md aspect-[3/4] bg-white dark:bg-champion-700 rounded-xl2 shadow-soft overflow-hidden touch-pan-y">
+        <img id="page-img-a" src="{{ catalogue.pages.all.0.image.url }}" alt="Page 1" class="absolute inset-0 w-full h-full object-contain transition-transform duration-200" style="transform-origin:center;">
+        <img id="page-img-b" src="" alt="" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-200">
+      </div>
+
+      <button id="btn-next" aria-label="Page suivante" class="w-10 h-10 flex-none grid place-items-center rounded-full bg-white dark:bg-champion-700 shadow-sm hover:shadow-soft transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- Zoom / plein écran -->
+    <div class="flex items-center justify-center gap-2 mt-6">
+      <button id="btn-zoom-out" class="px-3 py-2 rounded-xl2 bg-white dark:bg-champion-700 text-xs font-medium shadow-sm hover:shadow-soft transition-all" data-fr="− Zoom" data-en="− Zoom">− Zoom</button>
+      <button id="btn-zoom-in" class="px-3 py-2 rounded-xl2 bg-white dark:bg-champion-700 text-xs font-medium shadow-sm hover:shadow-soft transition-all" data-fr="+ Zoom" data-en="+ Zoom">+ Zoom</button>
+      <button id="btn-fullscreen" class="px-3 py-2 rounded-xl2 bg-white dark:bg-champion-700 text-xs font-medium shadow-sm hover:shadow-soft transition-all" data-fr="Plein écran" data-en="Fullscreen">Plein écran</button>
+    </div>
+
+    <!-- Bandeau de miniatures -->
+    <div id="miniatures" class="flex gap-2 overflow-x-auto mt-8 pb-2 scrollbar-hide">
+      {% for page in catalogue.pages.all %}
+      <button type="button" data-page="{{ forloop.counter }}" class="miniature-btn flex-none w-12 aspect-[3/4] rounded-md overflow-hidden border {% if forloop.first %}miniature-active{% else %}border-champion-200 dark:border-champion-600{% endif %}">
+        <img src="{{ page.image.url }}" alt="Page {{ forloop.counter }}" class="w-full h-full object-cover" loading="lazy">
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% else %}
+  <div class="rounded-xl3 bg-champion-50 dark:bg-champion-800/40 p-10 text-center text-sm text-champion-500" data-fr="Ce catalogue n'a pas encore de pages générées." data-en="This catalog has no pages yet.">
+    Ce catalogue n'a pas encore de pages générées.
+  </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .miniature-active { outline: 2px solid #E0A72E; outline-offset: 1px; border-color: transparent !important; }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ catalogue.pages.all|length|json_script:"nb-pages-data" }}
+<script id="pages-urls-data" type="application/json">
+[{% for page in catalogue.pages.all %}"{{ page.image.url|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]
+</script>
+<script>
+(function () {
+  const PAGE_URLS = JSON.parse(document.getElementById("pages-urls-data").textContent);
+  if (!PAGE_URLS.length) return;
+
+  let current = 1;
+  let scale = 1;
+  let showingA = true;
+
+  const imgA = document.getElementById("page-img-a");
+  const imgB = document.getElementById("page-img-b");
+  const pageCouranteEl = document.getElementById("page-courante");
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+  const viewport = document.getElementById("page-viewport");
+
+  function preload(index) {
+    if (index >= 1 && index <= PAGE_URLS.length) {
+      const img = new Image();
+      img.src = PAGE_URLS[index - 1];
+    }
+  }
+
+  function goToPage(num) {
+    if (num < 1 || num > PAGE_URLS.length) return;
+    current = num;
+    scale = 1;
+
+    const incoming = showingA ? imgB : imgA;
+    const outgoing = showingA ? imgA : imgB;
+
+    incoming.src = PAGE_URLS[num - 1];
+    incoming.alt = "Page " + num;
+    incoming.style.transform = "scale(1)";
+    incoming.classList.remove("opacity-0");
+    outgoing.classList.add("opacity-0");
+    outgoing.style.transform = "scale(1)";
+    showingA = !showingA;
+
+    pageCouranteEl.textContent = num;
+    btnPrev.disabled = num <= 1;
+    btnNext.disabled = num >= PAGE_URLS.length;
+
+    document.querySelectorAll(".miniature-btn").forEach(function (btn) {
+      btn.classList.toggle("miniature-active", parseInt(btn.dataset.page, 10) === num);
+    });
+
+    preload(num + 1);
+    preload(num - 1);
+  }
+
+  btnPrev.addEventListener("click", function () { goToPage(current - 1); });
+  btnNext.addEventListener("click", function () { goToPage(current + 1); });
+
+  document.querySelectorAll(".miniature-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () { goToPage(parseInt(btn.dataset.page, 10)); });
+  });
+
+  document.getElementById("btn-zoom-in").addEventListener("click", function () {
+    scale = Math.min(scale + 0.3, 2.4);
+    const active = showingA ? imgA : imgB;
+    active.style.transform = "scale(" + scale + ")";
+  });
+  document.getElementById("btn-zoom-out").addEventListener("click", function () {
+    scale = Math.max(scale - 0.3, 1);
+    const active = showingA ? imgA : imgB;
+    active.style.transform = "scale(" + scale + ")";
+  });
+  document.getElementById("btn-fullscreen").addEventListener("click", function () {
+    if (viewport.requestFullscreen) viewport.requestFullscreen();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") goToPage(current - 1);
+    if (e.key === "ArrowRight") goToPage(current + 1);
+  });
+
+  // Swipe tactile
+  let touchStartX = 0;
+  viewport.addEventListener("touchstart", function (e) { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+  viewport.addEventListener("touchend", function (e) {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) { dx > 0 ? goToPage(current - 1) : goToPage(current + 1); }
+  }, { passive: true });
+
+  preload(2);
+  btnPrev.disabled = true;
+})();
+</script>
+{% endblock %}

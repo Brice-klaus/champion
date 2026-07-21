@@ -1,0 +1,187 @@
+<!-- ═══════════════════════════════════════════════════════════
+     NAV DESKTOP AVEC SOUS-MENUS
+     Remplace le bloc <nav class="hidden lg:flex items-center gap-8 ...">
+     existant dans base.html
+═══════════════════════════════════════════════════════════ -->
+<nav class="hidden lg:flex items-center gap-7 font-medium text-sm">
+
+  <a href="{% url 'supermarche:accueil' %}" data-fr="Accueil" data-en="Home" class="hover:text-champion-500 transition-colors">Accueil</a>
+
+  <!-- ---------- RAYONS (méga-menu) ---------- -->
+  <div class="relative group">
+    <button type="button" class="flex items-center gap-1 hover:text-champion-500 transition-colors py-2" data-fr="Rayons" data-en="Aisles">
+      Rayons
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-400 transition-transform duration-200 group-hover:rotate-180 group-hover:text-champion-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+
+    <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[560px] z-50">
+      <div class="rounded-xl3 bg-white dark:bg-champion-800 shadow-soft dark:shadow-softdark border border-champion-100 dark:border-champion-700/40 p-6 grid grid-cols-2 gap-x-8 gap-y-5">
+        {% for cat in categories_nav %}
+        <div>
+          <a href="{% url 'supermarche:categorie_produits' cat.slug %}" class="flex items-center gap-1.5 font-display font-700 text-sm text-champion-700 dark:text-creme-100 hover:text-champion-500 transition-colors">
+            {% if cat.icone %}<span class="text-base">{{ cat.icone }}</span>{% endif %}
+            {{ cat.nom }}
+            {% if cat.sous_categories.all %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-champion-300 dark:text-champion-500 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            {% endif %}
+          </a>
+          {% if cat.sous_categories.all %}
+          <ul class="mt-2 space-y-1.5">
+            {% for sc in cat.sous_categories.all|slice:":4" %}
+            <li>
+              <a href="{% url 'supermarche:sous_categorie_produits' cat.slug sc.slug %}" class="text-xs text-champion-500 dark:text-champion-300/70 hover:text-champion-600 dark:hover:text-creme-100 transition-colors">
+                {{ sc.nom }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- PRODUITS (dropdown simple) ---------- -->
+  <div class="relative group">
+    <button type="button" class="flex items-center gap-1 hover:text-champion-500 transition-colors py-2" data-fr="Produits" data-en="Products">
+      Produits
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-400 transition-transform duration-200 group-hover:rotate-180 group-hover:text-champion-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+
+    <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 absolute left-0 top-full pt-3 w-64 z-50">
+      <div class="rounded-xl2 bg-white dark:bg-champion-800 shadow-soft dark:shadow-softdark border border-champion-100 dark:border-champion-700/40 py-2 overflow-hidden">
+        <a href="{% url 'supermarche:produits_nouveautes' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-mangue-100 dark:bg-mangue-500/20 grid place-items-center flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-mangue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+          </span>
+          <span class="text-sm flex-1" data-fr="Nouveautés" data-en="New arrivals">Nouveautés</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+        <a href="{% url 'supermarche:produits_locaux' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-champion-100 dark:bg-champion-500/20 grid place-items-center flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18"/></svg>
+          </span>
+          <span class="text-sm flex-1" data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- PROMOTIONS (dropdown, nouveau) ---------- -->
+  <div class="relative group">
+    <button type="button" class="flex items-center gap-1 hover:text-hibiscus-500 transition-colors py-2" data-fr="Promotions" data-en="Deals">
+      Promotions
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-400 transition-transform duration-200 group-hover:rotate-180 group-hover:text-hibiscus-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+
+    <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 absolute left-0 top-full pt-3 w-64 z-50">
+      <div class="rounded-xl2 bg-white dark:bg-champion-800 shadow-soft dark:shadow-softdark border border-champion-100 dark:border-champion-700/40 py-2 overflow-hidden">
+        <a href="{% url 'supermarche:promotions_liste' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-hibiscus-300/30 dark:bg-hibiscus-500/20 grid place-items-center flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-hibiscus-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/></svg>
+          </span>
+          <span class="text-sm flex-1" data-fr="Toutes les opérations" data-en="All operations">Toutes les opérations</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+        <a href="{% url 'supermarche:promotions_liste' %}?statut=en_cours" class="flex items-center gap-3 px-4 py-2.5 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-mangue-100 dark:bg-mangue-500/20 grid place-items-center flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-mangue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+          </span>
+          <span class="text-sm flex-1" data-fr="En cours" data-en="Currently active">En cours</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+        <a href="{% url 'supermarche:produits_promo' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-champion-100 dark:bg-champion-500/20 grid place-items-center flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4l1 13h14l1-13ZM8 7V5a4 4 0 0 1 8 0v2"/></svg>
+          </span>
+          <span class="text-sm flex-1" data-fr="Produits en promo" data-en="Discounted products">Produits en promo</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'supermarche:catalogues_liste' %}" data-fr="Catalogues" data-en="Catalogs" class="hover:text-champion-500 transition-colors">Catalogues</a>
+  {% comment %} <a href="{% url 'supermarche:recette_liste' %}" data-fr="Recettes" data-en="Recipes" class="hover:text-champion-500 transition-colors">Recettes</a> {% endcomment %}
+  {% comment %} <a href="{% url 'supermarche:fidelite' %}" data-fr="Fidélité" data-en="Loyalty" class="hover:text-champion-500 transition-colors">Fidélité</a> {% endcomment %}
+  <a href="{% url 'supermarche:magasin_liste' %}" data-fr="Magasins" data-en="Stores" class="hover:text-champion-500 transition-colors">Magasins</a>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAV MOBILE AVEC ACCORDÉONS IMBRIQUÉS
+     Remplace le bloc <div id="mobile-menu" ...> existant
+═══════════════════════════════════════════════════════════ -->
+<div id="mobile-menu" class="lg:hidden hidden border-t border-champion-100 dark:border-champion-700/40 bg-creme-50 dark:bg-champion-900">
+  <nav class="flex flex-col px-4 py-3 gap-1 font-medium text-sm">
+
+    <a href="{% url 'supermarche:accueil' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800" data-fr="Accueil" data-en="Home">Accueil</a>
+
+    <!-- Accordéon Rayons (niveau 1) -->
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800 text-left" data-target="acc-rayons">
+      <span data-fr="Rayons" data-en="Aisles">Rayons</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+    <div id="acc-rayons" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-champion-700/40 ml-2">
+      {% for cat in categories_nav %}
+        {% if cat.sous_categories.all %}
+        <button type="button" class="accordion-toggle flex items-center justify-between py-2 px-2 rounded-lg text-champion-700 dark:text-creme-100 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm text-left" data-target="acc-cat-{{ cat.pk }}">
+          <span>{{ cat.nom }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+        </button>
+        <div id="acc-cat-{{ cat.pk }}" class="hidden pl-3 flex flex-col gap-0.5 pb-1 border-l border-champion-100 dark:border-champion-700/40 ml-2">
+          <a href="{% url 'supermarche:categorie_produits' cat.slug %}" class="py-1.5 px-2 rounded-lg text-champion-500 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-xs font-semibold" data-fr="Tout voir" data-en="See all">Tout voir</a>
+          {% for sc in cat.sous_categories.all %}
+          <a href="{% url 'supermarche:sous_categorie_produits' cat.slug sc.slug %}" class="py-1.5 px-2 rounded-lg text-champion-500 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-xs">{{ sc.nom }}</a>
+          {% endfor %}
+        </div>
+        {% else %}
+        <a href="{% url 'supermarche:categorie_produits' cat.slug %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">{{ cat.nom }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Accordéon Produits (niveau 1) -->
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800 text-left" data-target="acc-produits">
+      <span data-fr="Produits" data-en="Products">Produits</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+    <div id="acc-produits" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-champion-700/40 ml-2">
+      <a href="{% url 'supermarche:produits_nouveautes' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm" data-fr="Nouveautés" data-en="New arrivals">Nouveautés</a>
+      <a href="{% url 'supermarche:produits_locaux' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm" data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</a>
+    </div>
+
+    <!-- Accordéon Promotions (niveau 1, nouveau) -->
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800 text-left" data-target="acc-promotions">
+      <span data-fr="Promotions" data-en="Deals">Promotions</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+    <div id="acc-promotions" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-champion-700/40 ml-2">
+      <a href="{% url 'supermarche:promotions_liste' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm" data-fr="Toutes les opérations" data-en="All operations">Toutes les opérations</a>
+      <a href="{% url 'supermarche:promotions_liste' %}?statut=en_cours" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm" data-fr="En cours" data-en="Currently active">En cours</a>
+      <a href="{% url 'supermarche:produits_promo' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm" data-fr="Produits en promo" data-en="Discounted products">Produits en promo</a>
+    </div>
+
+    <a href="{% url 'supermarche:catalogues_liste' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800" data-fr="Catalogues" data-en="Catalogs">Catalogues</a>
+    <a href="{% url 'supermarche:recette_liste' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800" data-fr="Recettes" data-en="Recipes">Recettes</a>
+    <a href="{% url 'supermarche:fidelite' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800" data-fr="Fidélité" data-en="Loyalty">Fidélité</a>
+    <a href="{% url 'supermarche:magasin_liste' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-champion-800" data-fr="Magasins" data-en="Stores">Magasins</a>
+  </nav>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     JS à ajouter dans le bloc <script> global de base.html
+═══════════════════════════════════════════════════════════ -->
+<script>
+  document.querySelectorAll('.accordion-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.dataset.target);
+      const icon = btn.querySelector('svg');
+      panel.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    });
+  });
+</script>

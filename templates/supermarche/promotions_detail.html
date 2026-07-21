@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ promotion.titre }} — Le Champion{% endblock %}
+
+{% block content %}
+
+<!-- ══════════ HERO PROMO ══════════ -->
+<section class="relative overflow-hidden {% if not promotion.image_banniere %}bg-champion-500{% endif %} text-creme-50 min-h-[340px] flex items-end">
+
+  {% if promotion.image_banniere %}
+  <img src="{{ promotion.image_banniere.url }}" alt="{{ promotion.titre }}" class="absolute inset-0 w-full h-full object-cover">
+  <div class="absolute inset-0 bg-nuit-900/55"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-nuit-900/95 via-nuit-900/50 to-nuit-900/20"></div>
+  {% else %}
+  <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-mangue-500/20 animate-floaty"></div>
+  <div class="absolute -left-16 bottom-0 w-48 h-48 rounded-full bg-champion-900/10 animate-floaty" style="animation-delay:1.2s"></div>
+  {% endif %}
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10 md:pb-14 w-full reveal [text-shadow:0_1px_8px_rgba(10,15,28,0.5)]">
+    <a href="{% url 'supermarche:promotions_liste' %}" class="inline-flex items-center gap-1 text-xs font-semibold text-creme-50/80 hover:text-creme-50 hover:gap-2 transition-all mb-4" data-fr="Toutes les promotions" data-en="All promotions">
+      ← <span data-fr="Toutes les promotions" data-en="All promotions">Toutes les promotions</span>
+    </a>
+
+    <div class="flex items-center gap-2 mb-4">
+      {% if promotion.statut == "en_cours" %}
+      <span class="inline-block px-2.5 py-1 rounded-full bg-mangue-500 text-champion-900 text-[11px] font-bold [text-shadow:none]" data-fr="EN COURS" data-en="ACTIVE">EN COURS</span>
+      {% elif promotion.statut == "planifiee" %}
+      <span class="inline-block px-2.5 py-1 rounded-full bg-champion-100 text-champion-800 text-[11px] font-bold [text-shadow:none]" data-fr="À VENIR" data-en="UPCOMING">À VENIR</span>
+      {% elif promotion.statut == "terminee" %}
+      <span class="inline-block px-2.5 py-1 rounded-full bg-nuit-800/80 text-creme-100 text-[11px] font-bold [text-shadow:none]" data-fr="TERMINÉE" data-en="ENDED">TERMINÉE</span>
+      {% else %}
+      <span class="inline-block px-2.5 py-1 rounded-full bg-hibiscus-500 text-creme-50 text-[11px] font-bold [text-shadow:none]" data-fr="ANNULÉE" data-en="CANCELLED">ANNULÉE</span>
+      {% endif %}
+      <span class="text-xs font-medium text-creme-50/95" data-fr="Du {{ promotion.date_debut|date:'d M Y' }} au {{ promotion.date_fin|date:'d M Y' }}" data-en="From {{ promotion.date_debut|date:'M d, Y' }} to {{ promotion.date_fin|date:'M d, Y' }}">
+        Du {{ promotion.date_debut|date:"d M Y" }} au {{ promotion.date_fin|date:"d M Y" }}
+      </span>
+    </div>
+
+    <h1 class="font-display font-800 text-3xl md:text-4xl max-w-2xl">{{ promotion.titre }}</h1>
+    {% if promotion.description %}
+    <p class="text-creme-50/90 text-sm md:text-base mt-3 max-w-xl leading-relaxed">{{ promotion.description }}</p>
+    {% endif %}
+
+    <div class="flex flex-wrap gap-x-6 gap-y-2 mt-6 text-xs font-medium text-creme-50/90">
+      <span class="flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4l1 13h14l1-13ZM8 7V5a4 4 0 0 1 8 0v2"/></svg>
+        <span data-fr="{{ promotion.produits.count }} produit{{ promotion.produits.count|pluralize }}" data-en="{{ promotion.produits.count }} product{{ promotion.produits.count|pluralize }}">{{ promotion.produits.count }} produit{{ promotion.produits.count|pluralize }}</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5 12 4l9 6.5M5 9.5V20h14V9.5"/></svg>
+        {% if promotion.magasins.all %}
+        <span data-fr="{{ promotion.magasins.count }} magasin{{ promotion.magasins.count|pluralize }} participant{{ promotion.magasins.count|pluralize }}" data-en="{{ promotion.magasins.count }} participating store{{ promotion.magasins.count|pluralize }}">{{ promotion.magasins.count }} magasin{{ promotion.magasins.count|pluralize }} participant{{ promotion.magasins.count|pluralize }}</span>
+        {% else %}
+        <span data-fr="Valable dans tous les magasins" data-en="Valid in all stores">Valable dans tous les magasins</span>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MAGASINS PARTICIPANTS ══════════ -->
+{% if promotion.magasins.all %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 reveal">
+  <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+    {% for magasin in promotion.magasins.all %}
+    <a href="{{ magasin.get_absolute_url|default:'#' }}" class="flex-none flex items-center gap-2 px-4 py-2 rounded-full bg-champion-50 dark:bg-nuit-800 text-champion-700 dark:text-white text-xs font-semibold hover:bg-champion-100 dark:hover:bg-nuit-700 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+      {{ magasin.nom }}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════ PRODUITS DE LA PROMOTION ══════════ -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+  {% if promotion.produits.all %}
+  <div class="mb-8 reveal">
+    <h2 class="font-display font-800 text-2xl" data-fr="Produits concernés" data-en="Products included">Produits concernés</h2>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6">
+    {% for produit in promotion.produits.all %}
+    <div class="reveal" style="transition-delay: {{ forloop.counter0 }}0ms">
+      {% include "supermarche/partials/product_card.html" with produit=produit %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-16 reveal">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-champion-50 dark:bg-nuit-800 grid place-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-champion-300 dark:text-nuit-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4l1 13h14l1-13ZM8 7V5a4 4 0 0 1 8 0v2"/></svg>
+    </div>
+    <p class="text-champion-500 dark:text-nuit-300 text-sm" data-fr="Aucun produit spécifique associé à cette opération." data-en="No specific product linked to this operation.">Aucun produit spécifique associé à cette opération.</p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ══════════ AUTRES PROMOTIONS ══════════ -->
+{% if autres_promotions %}
+<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-nuit-800/40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 reveal">
+      <span class="text-xs font-semibold uppercase tracking-widest text-hibiscus-500" data-fr="À ne pas manquer" data-en="Don't miss out">À ne pas manquer</span>
+      <h2 class="font-display font-800 text-2xl mt-1" data-fr="Autres promotions en cours" data-en="Other current promotions">Autres promotions en cours</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      {% for promo in autres_promotions %}
+      <a href="{{ promo.get_absolute_url|default:'#' }}" class="reveal relative rounded-xl3 overflow-hidden text-creme-50 flex flex-col justify-between min-h-[260px] {% if not promo.image_banniere %}bg-champion-500{% endif %}" style="transition-delay: {{ forloop.counter0 }}00ms">
+        {% if promo.image_banniere %}
+        <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre }}" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-nuit-900/55"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-nuit-900/95 via-nuit-900/55 to-nuit-900/25"></div>
+        {% else %}
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-mangue-500/25"></div>
+        {% endif %}
+        <div class="relative p-6 flex flex-col flex-1 justify-between [text-shadow:0_1px_6px_rgba(10,15,28,0.4)]">
+          <div>
+            <span class="inline-block px-2.5 py-1 rounded-full bg-mangue-500 text-champion-900 text-[11px] font-bold [text-shadow:none] mb-3" data-fr="EN COURS" data-en="ACTIVE">EN COURS</span>
+            <h3 class="font-display font-700 text-lg leading-snug text-creme-50">{{ promo.titre }}</h3>
+          </div>
+          <span class="mt-4 inline-flex items-center gap-1 font-semibold text-sm text-creme-50 hover:gap-2 transition-all" data-fr="Voir les produits" data-en="View products">Voir les produits →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}

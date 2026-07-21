@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if query %}Résultats pour "{{ query }}"{% else %}Recherche{% endif %} — Le Champion{% endblock %}
+{% block description %}Recherchez des produits, recettes, articles et promotions chez Le Champion Supermarché Togo.{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Barre de recherche -->
+    <div class="max-w-2xl mx-auto mb-10">
+        <form method="get" class="relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-champion-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5A6.5 6.5 0 1 1 4 10.5a6.5 6.5 0 0 1 13 0Z"/>
+            </svg>
+            <input type="text" name="q" value="{{ query }}" autofocus
+                   placeholder="Rechercher un produit, une recette, un article..."
+                   class="w-full pl-12 pr-4 py-3.5 rounded-xl2 border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 text-sm focus:outline-none focus:ring-2 focus:ring-champion-400">
+        </form>
+    </div>
+
+    {% if not query %}
+    <!-- État initial : aucune recherche -->
+    <div class="text-center py-16">
+        <p class="text-4xl mb-3">🔍</p>
+        <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Commencez à taper pour rechercher dans le catalogue." data-en="Start typing to search the catalog.">
+            Commencez à taper pour rechercher dans le catalogue.
+        </p>
+    </div>
+
+    {% elif total_resultats == 0 %}
+    <!-- Aucun résultat -->
+    <div class="text-center py-16">
+        <p class="text-4xl mb-3">🤷</p>
+        <p class="text-base font-medium text-champion-900 dark:text-creme-100 mb-1">
+            <span data-fr="Aucun résultat pour" data-en="No results for">Aucun résultat pour</span> "{{ query }}"
+        </p>
+        <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Essayez avec des mots-clés différents ou plus généraux." data-en="Try different or more general keywords.">
+            Essayez avec des mots-clés différents ou plus généraux.
+        </p>
+    </div>
+
+    {% else %}
+    <!-- Résumé + navigation par ancre -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8 pb-6 border-b border-champion-100 dark:border-champion-700/40">
+        <p class="text-sm text-champion-500 dark:text-champion-300/70">
+            {{ total_resultats }}
+            <span data-fr="résultat{{ total_resultats|pluralize }} pour" data-en="result{{ total_resultats|pluralize }} for">résultat{{ total_resultats|pluralize }} pour</span>
+            "<span class="text-champion-900 dark:text-creme-100 font-medium">{{ query }}</span>"
+        </p>
+        <nav class="flex flex-wrap gap-2 text-xs">
+            {% if nb_produits %}
+            <a href="#produits" class="px-3 py-1.5 rounded-full bg-champion-100 dark:bg-champion-800 text-champion-700 dark:text-champion-200 font-medium hover:bg-champion-200 dark:hover:bg-champion-700 transition-colors">
+                <span data-fr="Produits" data-en="Products">Produits</span> ({{ nb_produits }})
+            </a>
+            {% endif %}
+            {% if nb_recettes %}
+            <a href="#recettes" class="px-3 py-1.5 rounded-full bg-champion-100 dark:bg-champion-800 text-champion-700 dark:text-champion-200 font-medium hover:bg-champion-200 dark:hover:bg-champion-700 transition-colors">
+                <span data-fr="Recettes" data-en="Recipes">Recettes</span> ({{ nb_recettes }})
+            </a>
+            {% endif %}
+            {% if nb_articles %}
+            <a href="#articles" class="px-3 py-1.5 rounded-full bg-champion-100 dark:bg-champion-800 text-champion-700 dark:text-champion-200 font-medium hover:bg-champion-200 dark:hover:bg-champion-700 transition-colors">
+                <span data-fr="Actualités" data-en="News">Actualités</span> ({{ nb_articles }})
+            </a>
+            {% endif %}
+            {% if nb_promotions %}
+            <a href="#promotions" class="px-3 py-1.5 rounded-full bg-champion-100 dark:bg-champion-800 text-champion-700 dark:text-champion-200 font-medium hover:bg-champion-200 dark:hover:bg-champion-700 transition-colors">
+                <span data-fr="Promotions" data-en="Deals">Promotions</span> ({{ nb_promotions }})
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <!-- Produits -->
+    {% if produits %}
+    <div id="produits" class="mb-14 scroll-mt-24">
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="font-display font-700 text-lg text-champion-900 dark:text-creme-100" data-fr="Produits" data-en="Products">Produits</h2>
+            {% if nb_produits > produits|length %}
+            <span class="text-xs text-champion-400 dark:text-champion-300/60">
+                <span data-fr="{{ produits|length }} sur {{ nb_produits }}" data-en="{{ produits|length }} of {{ nb_produits }}">{{ produits|length }} sur {{ nb_produits }}</span>
+            </span>
+            {% endif %}
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            {% for produit in produits %}
+            {% include "supermarche/partials/product_card.html" with produit=produit %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recettes -->
+    {% if recettes %}
+    <div id="recettes" class="mb-14 scroll-mt-24">
+        <h2 class="font-display font-700 text-lg text-champion-900 dark:text-creme-100 mb-5" data-fr="Recettes" data-en="Recipes">Recettes</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for recette in recettes %}
+            <a href="{{ recette.get_absolute_url|default:'#' }}" class="group rounded-xl3 overflow-hidden bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 hover:shadow-soft dark:hover:shadow-softdark transition-shadow">
+                <div class="aspect-[4/3] overflow-hidden">
+                    {% if recette.image %}
+                    <img src="{{ recette.image.url }}" alt="{{ recette.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    {% else %}
+                    <div class="w-full h-full bg-champion-100 dark:bg-champion-700"></div>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    {% if recette.temps_preparation %}
+                    <span class="text-xs text-champion-400 dark:text-champion-300/70">{{ recette.temps_preparation }} min</span>
+                    {% endif %}
+                    <h3 class="font-display font-700 text-sm mt-1 group-hover:text-champion-500 transition-colors">{{ recette.titre }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Articles -->
+    {% if articles %}
+    <div id="articles" class="mb-14 scroll-mt-24">
+        <h2 class="font-display font-700 text-lg text-champion-900 dark:text-creme-100 mb-5" data-fr="Actualités" data-en="News">Actualités</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for article in articles %}
+            <a href="{{ article.get_absolute_url|default:'#' }}" class="group">
+                <div class="aspect-[16/10] rounded-xl3 overflow-hidden mb-3">
+                    {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    {% else %}
+                    <div class="w-full h-full bg-champion-100 dark:bg-champion-700"></div>
+                    {% endif %}
+                </div>
+                <span class="text-xs text-champion-400">{{ article.date_publication|date:"d M Y" }}</span>
+                <h3 class="font-display font-700 text-sm mt-1 group-hover:text-champion-500 transition-colors">{{ article.titre }}</h3>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Promotions -->
+    {% if promotions %}
+    <div id="promotions" class="scroll-mt-24">
+        <h2 class="font-display font-700 text-lg text-champion-900 dark:text-creme-100 mb-5" data-fr="Promotions" data-en="Deals">Promotions</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {% for promo in promotions %}
+            <a href="{% url 'supermarche:promotion_detail' promo.slug %}"
+               class="flex gap-3 p-3 rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 hover:shadow-soft dark:hover:shadow-softdark transition-shadow">
+                <div class="w-16 h-16 flex-none rounded-lg overflow-hidden bg-champion-100 dark:bg-champion-700">
+                    {% if promo.image_banniere %}
+                    <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre }}" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <div class="flex flex-col justify-center min-w-0">
+                    <p class="text-sm font-medium text-champion-900 dark:text-creme-100 line-clamp-2">{{ promo.titre }}</p>
+                    {% if promo.date_fin %}
+                    <p class="text-xs text-champion-400 dark:text-champion-300/60 mt-1">
+                        <span data-fr="Jusqu'au {{ promo.date_fin|date:'d M' }}" data-en="Until {{ promo.date_fin|date:'M d' }}">
+                            Jusqu'au {{ promo.date_fin|date:"d M" }}
+                        </span>
+                    </p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</section>
+{% endblock %}

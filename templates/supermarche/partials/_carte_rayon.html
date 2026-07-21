@@ -1,0 +1,56 @@
+{% load static %}
+
+<a href=""
+   class="group relative flex flex-col gap-2.5 rounded-2xl bg-white p-4 border border-black/5
+          {% if categorie.nb_produits == 0 %}opacity-60{% else %}hover:shadow-lg hover:-translate-y-0.5{% endif %}
+          transition-all duration-200">
+
+    {# Bande latérale colorée #}
+    <span class="absolute left-0 top-0 h-full w-1 rounded-l-2xl bg-champion"></span>
+
+    {# Icône + badge de comptage #}
+    <div class="flex items-center justify-between">
+        <span class="text-4xl leading-none">{{ categorie.icone|default:"🛒" }}</span>
+
+        {% if categorie.nb_produits > 0 %}
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-champion/10 text-champion">
+                <span data-fr="{{ categorie.nb_produits }} produit{{ categorie.nb_produits|pluralize }}"
+                      data-en="{{ categorie.nb_produits }} product{{ categorie.nb_produits|pluralize }}">
+                    {{ categorie.nb_produits }} produit{{ categorie.nb_produits|pluralize }}
+                </span>
+            </span>
+        {% else %}
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-creme text-gray-500">
+                <span data-fr="Aucun produit" data-en="No products">Aucun produit</span>
+            </span>
+        {% endif %}
+    </div>
+
+    {# Nom du rayon #}
+    <p class="font-display font-semibold text-base text-gray-900">
+        {{ categorie.nom }}
+    </p>
+
+    {# Sous-catégories (aperçu) #}
+    {% with sous_cats=categorie.sous_categories.all %}
+        {% if categorie.nb_produits > 0 and sous_cats %}
+            <div class="flex flex-wrap gap-1.5">
+                {% for sc in sous_cats|slice:":3" %}
+                    <span class="text-xs text-gray-500 bg-creme px-2 py-1 rounded-md">{{ sc.nom }}</span>
+                {% endfor %}
+                {% if sous_cats|length > 3 %}
+                    <span class="text-xs text-gray-400 bg-creme px-2 py-1 rounded-md">
+                        +{{ sous_cats|length|add:"-3" }}
+                    </span>
+                {% endif %}
+            </div>
+        {% elif categorie.nb_produits == 0 %}
+            <p class="text-xs text-gray-400">
+                <span data-fr="Catégorie visible, sans produit actif"
+                      data-en="Category visible, no active product">
+                    Catégorie visible, sans produit actif
+                </span>
+            </p>
+        {% endif %}
+    {% endwith %}
+</a>

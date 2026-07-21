@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nouveautés — Le Champion{% endblock %}
+
+{% block content %}
+
+<!-- ══════════ EN-TÊTE ══════════ -->
+<section class="bg-champion-900 text-creme-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center reveal">
+    <span class="text-xs font-semibold uppercase tracking-widest text-mangue-500" data-fr="Fraîchement arrivé" data-en="Freshly arrived">Fraîchement arrivé</span>
+    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Toutes nos nouveautés" data-en="All new arrivals">Toutes nos nouveautés</h1>
+    <p class="text-sm text-creme-100/70 mt-3" data-fr="{{ paginator.count }} nouveau{{ paginator.count|pluralize:',x' }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}" data-en="{{ paginator.count }} new product{{ paginator.count|pluralize }} recently added">
+      {{ paginator.count }} nouveau{{ paginator.count|pluralize:",x" }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ GRILLE PRODUITS ══════════ -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+
+  {% if produits %}
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6">
+    {% for produit in produits %}
+    <div class="reveal" style="transition-delay: {{ forloop.counter0 }}0ms">
+      {% include "supermarche/partials/product_card.html" with produit=produit %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ---------- Pagination ---------- -->
+  {% if is_paginated %}
+  <div class="flex items-center justify-center gap-2 mt-14 reveal">
+
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page précédente">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    {% else %}
+    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </span>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+      {% if num == page_obj.number %}
+      <span class="w-10 h-10 grid place-items-center rounded-xl2 bg-champion-500 text-creme-50 font-semibold text-sm">{{ num }}</span>
+      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+      <a href="?page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
+      {% elif num == 1 or num == paginator.num_pages %}
+      <a href="?page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
+      {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+      <span class="w-10 h-10 grid place-items-center text-champion-300 text-sm">…</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page suivante">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </a>
+    {% else %}
+    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </span>
+    {% endif %}
+
+  </div>
+  {% endif %}
+
+  {% else %}
+  <!-- ---------- Etat vide ---------- -->
+  <div class="text-center py-20 reveal">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-champion-50 dark:bg-champion-800 grid place-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-champion-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></svg>
+    </div>
+    <p class="text-champion-500 text-sm" data-fr="Aucune nouveauté pour le moment." data-en="No new arrivals right now.">Aucune nouveauté pour le moment.</p>
+    <a href="{% url 'supermarche:catalogue_accueil' %}" class="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Retour au catalogue" data-en="Back to catalog">Retour au catalogue →</a>
+  </div>
+  {% endif %}
+
+</section>
+
+{% endblock %}

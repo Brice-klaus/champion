@@ -1,0 +1,161 @@
+html {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+/* Reveal-on-scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+
+
+/* Texte descriptif (Description, Composition) : noir en mode clair, couleur crème atténuée en mode sombre */
+.text-corps-produit {
+  color: #171717;
+}
+
+.dark .text-corps-produit {
+  color: #FFFFFF;
+}
+
+.dark body {
+  background-color: #0A0F1C;
+}
+
+/* Scalloped "awning" divider — signature motif of Le Champion */
+.scallop-bottom {
+  -webkit-mask-image: radial-gradient(circle at 20px 0, transparent 18px, black 19px);
+  -webkit-mask-size: 40px 20px;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: bottom;
+  mask-image: radial-gradient(circle at 20px 0, transparent 18px, black 19px);
+  mask-size: 40px 20px;
+  mask-repeat: repeat-x;
+  mask-position: bottom;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F5A9A3;
+  border-radius: 8px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #98130E;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .animate-fadeUp,
+  .animate-floaty,
+  .animate-marquee {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
+/* ── Carrousel partenaires ── */
+.partenaires-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.partenaires-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: partenaires-scroll 32s linear infinite;
+}
+
+.partenaires-carousel:hover .partenaires-track {
+  animation-play-state: paused;
+}
+
+.partenaires-card {
+  flex: none;
+  width: 160px;
+  height: 115px;
+  background: #FFFFFF;
+  border: 1px solid #F4EFE6;
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  box-shadow: 0 4px 16px -6px rgba(43, 12, 9, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partenaires-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px -6px rgba(43, 12, 9, 0.15);
+}
+
+.partenaires-card img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.partenaires-card:hover img {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+.dark .partenaires-card {
+  background: #6F0E0A;
+  border-color: #98130E;
+}
+
+@keyframes partenaires-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partenaires-track {
+    animation: none;
+  }
+}

@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Le Champion — Supermarché Togo{% endblock %}</title>
+<meta name="description" content="{% block description %}Le Champion, votre supermarché au Togo. Produits frais, promotions, recettes et programme de fidélité.{% endblock %}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="{% static 'supermarche/js/tailwind-config.js' %}"></script>
+<link rel="stylesheet" href="{% static 'supermarche/css/base.css' %}">
+{% block extra_head %}{% endblock %}
+
+</head>
+
+<body class="bg-creme-50 dark:bg-nuit-900 text-champion-900 dark:text-white font-body antialiased transition-colors duration-300">
+
+<!-- ══════════ HEADER ══════════ -->
+<header class="notranslate sticky top-0 z-50 bg-creme-50/90 dark:bg-nuit-900/90 backdrop-blur-md border-b border-champion-100/60 dark:border-nuit-600/40">
+
+  {% if promotions_actives %}
+  <div class="bg-champion-500 text-creme-50 overflow-hidden">
+    <div class="flex whitespace-nowrap py-1.5 animate-marquee">
+      {% for promo in promotions_actives %}
+        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-mangue-500"></span>
+          {{ promo.titre }}
+        </span>
+      {% endfor %}
+      {% for promo in promotions_actives %}
+        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2" aria-hidden="true">
+          <span class="w-1.5 h-1.5 rounded-full bg-mangue-500"></span>
+          {{ promo.titre }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 md:h-20">
+
+      <a href="{% url 'supermarche:accueil' %}" class="flex items-center gap-2.5 group flex-none">
+        <span class="w-11 h-11 rounded-xl2 bg-white shadow-sm ring-1 ring-champion-100 dark:ring-nuit-600 grid place-items-center overflow-hidden group-hover:rotate-3 transition-transform duration-300 flex-none">
+          <img src="{% static 'supermarche/img/logo-badge.png' %}" alt="Le Champion Supermarché" class="w-9 h-9 object-contain">
+        </span>
+        <span class="font-display font-800 text-lg md:text-xl leading-none hidden sm:inline">
+          Le <span class="text-champion-500 dark:text-mangue-500">Champion</span>
+        </span>
+      </a>
+
+      {% include 'supermarche/partials/nav_desktop.html' %}
+
+      <div class="flex items-center gap-2 md:gap-3">
+
+        <button class="hidden md:grid place-items-center w-10 h-10 rounded-full hover:bg-champion-100 dark:hover:bg-nuit-800 transition-colors" aria-label="Rechercher">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5A6.5 6.5 0 1 1 4 10.5a6.5 6.5 0 0 1 13 0Z"/>
+          </svg>
+        </button>
+
+        <button id="lang-toggle" type="button"
+          class="flex items-center gap-1 px-3 h-10 rounded-full border border-champion-200 dark:border-nuit-600 text-xs font-semibold hover:border-champion-500 transition-colors"
+          aria-label="Changer de langue">
+          <span id="lang-current">FR</span>
+          <span class="text-champion-300 dark:text-nuit-300">/</span>
+          <span id="lang-other" class="opacity-50">EN</span>
+        </button>
+
+        <button id="theme-toggle" type="button"
+          class="grid place-items-center w-10 h-10 rounded-full hover:bg-champion-100 dark:hover:bg-nuit-800 transition-colors"
+          aria-label="Changer de thème">
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5M12 19.5V21M4.22 4.22l1.06 1.06M18.72 18.72l1.06 1.06M3 12h1.5M19.5 12H21M4.22 19.78l1.06-1.06M18.72 5.28l1.06-1.06M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"/>
+          </svg>
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/>
+          </svg>
+        </button>
+
+        <a href="{% url 'supermarche:panier' %}" class="relative grid place-items-center w-10 h-10 rounded-full bg-champion-500 text-creme-50 hover:bg-champion-600 transition-colors" aria-label="Panier">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.5l1.75 11.5A2 2 0 0 0 7.47 16.5h9.06a2 2 0 0 0 1.97-1.63L20 7H5.5"/>
+            <circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>
+          </svg>
+          {% if panier_count > 0 %}
+          <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-mangue-500 text-[10px] font-bold grid place-items-center text-champion-900">
+            {{ panier_count }}
+          </span>
+          {% endif %}
+        </a>
+
+        <button id="mobile-menu-btn" class="lg:hidden grid place-items-center w-10 h-10 rounded-full hover:bg-champion-100 dark:hover:bg-nuit-800 transition-colors" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {% include 'supermarche/partials/nav_mobile.html' %}
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="bg-nuit-900 text-white mt-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="w-10 h-10 rounded-xl2 bg-white grid place-items-center overflow-hidden flex-none">
+            <img src="{% static 'supermarche/img/logo-badge.png' %}" alt="Le Champion Supermarché" class="w-8 h-8 object-contain">
+          </span>
+          <span class="font-display font-800 text-lg">Le Champion</span>
+        </div>
+        <p class="text-sm text-white/70 leading-relaxed" data-fr="Votre supermarché de confiance au Togo, depuis toujours proche de vous." data-en="Your trusted supermarket in Togo, close to you since day one.">
+          Votre supermarché de confiance au Togo, depuis toujours proche de vous.
+        </p>
+        <div class="flex gap-3 mt-5">
+          {% for icon in "fb,ig,x" %}
+          <a href="#" class="w-9 h-9 rounded-full border border-nuit-600 grid place-items-center hover:bg-champion-500 hover:border-champion-500 transition-colors text-xs">{{ icon }}</a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-display font-700 mb-4 text-mangue-500" data-fr="Navigation" data-en="Navigation">Navigation</h4>
+        <ul class="space-y-2.5 text-sm text-white/70">
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Nos rayons" data-en="Our aisles">Nos rayons</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Promotions" data-en="Deals">Promotions</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Recettes" data-en="Recipes">Recettes</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Nos magasins" data-en="Our stores">Nos magasins</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display font-700 mb-4 text-mangue-500" data-fr="Aide" data-en="Help">Aide</h4>
+        <ul class="space-y-2.5 text-sm text-white/70">
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Programme fidélité" data-en="Loyalty program">Programme fidélité</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Livraison" data-en="Delivery">Livraison</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Contact" data-en="Contact">Contact</a></li>
+          <li><a href="#" class="hover:text-white transition-colors" data-fr="Carrières" data-en="Careers">Carrières</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display font-700 mb-4 text-mangue-500" data-fr="Restons en contact" data-en="Stay in touch">Restons en contact</h4>
+        <p class="text-sm text-white/70 mb-3" data-fr="Recevez nos meilleures offres chaque semaine." data-en="Get our best deals every week.">Recevez nos meilleures offres chaque semaine.</p>
+        <form class="flex gap-2">
+          <input type="email" placeholder="votre@email.com" class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl2 bg-nuit-800 border border-nuit-600 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-mangue-500">
+          <button type="submit" class="px-4 py-2.5 rounded-xl2 bg-mangue-500 hover:bg-mangue-600 text-champion-900 font-semibold text-sm transition-colors">→</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-14 pt-6 border-t border-nuit-700 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
+      <p>&copy; <span id="year"></span> Le Champion Supermarché Togo. <span data-fr="Tous droits réservés." data-en="All rights reserved.">Tous droits réservés.</span></p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-white transition-colors" data-fr="Mentions légales" data-en="Legal notice">Mentions légales</a>
+        <a href="#" class="hover:text-white transition-colors" data-fr="Confidentialité" data-en="Privacy">Confidentialité</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+<script src="{% static 'supermarche/js/magasin-detail-map.js' %}"></script>
+<script src="{% static 'supermarche/js/magasin-map.js' %}"></script>
+<script src="{% static 'supermarche/js/main.js' %}"></script>
+
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

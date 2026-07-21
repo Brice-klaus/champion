@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ categorie.nom }} — Le Champion{% endblock %}
+{% block description %}Découvrez tous les produits du rayon {{ categorie.nom }} chez Le Champion Supermarché.{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Fil d'ariane -->
+    <nav class="text-xs text-champion-400 dark:text-champion-300/60 mb-6 flex items-center gap-1.5">
+        <a href="{% url 'supermarche:accueil' %}" class="hover:text-champion-600" data-fr="Accueil" data-en="Home">Accueil</a>
+        <span>/</span>
+        <a href="{% url 'supermarche:catalogue_accueil' %}" class="hover:text-champion-600" data-fr="Rayons" data-en="Aisles">Rayons</a>
+        <span>/</span>
+        <span class="text-champion-700 dark:text-creme-100">{{ categorie.nom }}</span>
+    </nav>
+
+    <!-- En-tête du rayon -->
+    <div class="flex items-center gap-4 mb-8">
+        <span class="text-4xl leading-none">{{ categorie.icone|default:"🛒" }}</span>
+        <div>
+            <h1 class="font-display font-800 text-2xl md:text-3xl text-champion-900 dark:text-creme-100">
+                {{ categorie.nom }}
+            </h1>
+            {% if categorie.description %}
+            <p class="text-sm text-champion-500 dark:text-champion-300/70 mt-1">{{ categorie.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
+
+        <!-- ══════════ SIDEBAR — Sous-catégories ══════════ -->
+        <aside class="lg:sticky lg:top-24 lg:self-start">
+            <p class="font-display font-700 text-sm text-champion-700 dark:text-creme-100 mb-3" data-fr="Sous-catégories" data-en="Subcategories">
+                Sous-catégories
+            </p>
+            <nav class="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+                <a href="{% url 'supermarche:rayon_detail' categorie.slug %}{% if tri_actif %}?tri={{ tri_actif }}{% endif %}"
+                   class="flex-none flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm whitespace-nowrap lg:whitespace-normal transition-colors
+                          {% if not sous_categorie_active %}bg-champion-500 text-creme-50{% else %}hover:bg-champion-100 dark:hover:bg-champion-800 text-champion-700 dark:text-champion-200{% endif %}">
+                    <span data-fr="Tout voir" data-en="See all">Tout voir</span>
+                </a>
+                {% for sc in sous_categories %}
+                <a href="?sous_categorie={{ sc.slug }}{% if tri_actif %}&tri={{ tri_actif }}{% endif %}"
+                   class="flex-none flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm whitespace-nowrap lg:whitespace-normal transition-colors
+                          {% if sous_categorie_active == sc.slug %}bg-champion-500 text-creme-50{% else %}hover:bg-champion-100 dark:hover:bg-champion-800 text-champion-700 dark:text-champion-200{% endif %}">
+                    <span>{{ sc.nom }}</span>
+                    <span class="text-xs {% if sous_categorie_active == sc.slug %}text-creme-50/80{% else %}text-champion-400{% endif %}">
+                        {{ sc.nb_produits }}
+                    </span>
+                </a>
+                {% endfor %}
+            </nav>
+        </aside>
+
+        <!-- ══════════ CONTENU — Tri + grille produits ══════════ -->
+        <div>
+            <!-- Barre de tri -->
+            <div class="flex items-center justify-between mb-5">
+                <p class="text-sm text-champion-400 dark:text-champion-300/60">
+                    {{ page_obj.paginator.count }}
+                    <span data-fr="produit{{ page_obj.paginator.count|pluralize }}" data-en="product{{ page_obj.paginator.count|pluralize }}">
+                        produit{{ page_obj.paginator.count|pluralize }}
+                    </span>
+                </p>
+                <form method="get" class="flex items-center gap-2">
+                    {% if sous_categorie_active %}
+                    <input type="hidden" name="sous_categorie" value="{{ sous_categorie_active }}">
+                    {% endif %}
+                    <label for="tri" class="text-xs text-champion-400 dark:text-champion-300/60 hidden sm:inline" data-fr="Trier par" data-en="Sort by">Trier par</label>
+                    <select id="tri" name="tri" onchange="this.form.submit()"
+                            class="text-sm rounded-lg border border-champion-200 dark:border-champion-700 bg-white dark:bg-champion-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-400">
+                        <option value="nom" {% if tri_actif == "nom" or not tri_actif %}selected{% endif %} data-fr="Nom" data-en="Name">Nom</option>
+                        <option value="prix_asc" {% if tri_actif == "prix_asc" %}selected{% endif %} data-fr="Prix croissant" data-en="Price: low to high">Prix croissant</option>
+                        <option value="prix_desc" {% if tri_actif == "prix_desc" %}selected{% endif %} data-fr="Prix décroissant" data-en="Price: high to low">Prix décroissant</option>
+                        <option value="promo" {% if tri_actif == "promo" %}selected{% endif %} data-fr="Meilleures promos" data-en="Best deals">Meilleures promos</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Grille produits -->
+            {% if produits %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+                {% for produit in produits %}
+                <a href="{% url 'supermarche:produit_detail' produit.slug %}"
+                   class="group flex flex-col rounded-xl2 bg-white dark:bg-champion-800 border border-champion-100 dark:border-champion-700/40 overflow-hidden hover:shadow-soft dark:hover:shadow-softdark transition-shadow">
+
+                    <div class="relative aspect-square bg-creme-100 dark:bg-champion-900/40 overflow-hidden">
+                        {% if produit.image %}
+                        <img src="{{ produit.image.url }}" alt="{{ produit.nom }}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        {% else %}
+                        <div class="w-full h-full grid place-items-center text-3xl text-champion-200">🛒</div>
+                        {% endif %}
+
+                        {% if produit.prix_promo %}
+                        <span class="absolute top-2 left-2 bg-hibiscus-500 text-creme-50 text-xs font-bold px-2 py-1 rounded-full">
+                            -{{ produit.pourcentage_reduction }}%
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex flex-col gap-1 p-3">
+                        <p class="text-sm font-medium text-champion-900 dark:text-creme-100 line-clamp-2 leading-snug">
+                            {{ produit.nom }}
+                        </p>
+                        <p class="text-[11px] text-champion-400 dark:text-champion-300/60">
+                            {{ produit.get_unite_de_vente_display }}
+                        </p>
+
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="font-display font-700 text-sm text-champion-600 dark:text-mangue-400">
+                                {{ produit.prix_affiche }} FCFA
+                            </span>
+                            {% if produit.prix_promo %}
+                            <span class="text-xs text-champion-300 line-through">{{ produit.prix_public }} FCFA</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav class="flex items-center justify-center gap-1.5 mt-10">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"
+                   class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">‹</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <span class="w-9 h-9 grid place-items-center rounded-full bg-champion-500 text-creme-50 text-sm font-semibold">{{ num }}</span>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <a href="?page={{ num }}{% if querystring %}&{{ querystring }}{% endif %}"
+                       class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"
+                   class="w-9 h-9 grid place-items-center rounded-full border border-champion-200 dark:border-champion-700 hover:bg-champion-100 dark:hover:bg-champion-800 text-sm">›</a>
+                {% endif %}
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-20">
+                <p class="text-4xl mb-3">🔍</p>
+                <p class="text-sm text-champion-400 dark:text-champion-300/60" data-fr="Aucun produit disponible dans cette sélection." data-en="No products available in this selection.">
+                    Aucun produit disponible dans cette sélection.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

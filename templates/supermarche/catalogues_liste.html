@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Le Champion — Catalogues{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+
+  <div class="text-center mb-12 reveal">
+    <span class="text-xs font-semibold uppercase tracking-widest text-mangue-600 dark:text-mangue-500" data-fr="Chaque semaine, de nouvelles offres" data-en="New deals every week">Chaque semaine, de nouvelles offres</span>
+    <h1 class="font-display font-800 text-3xl md:text-4xl mt-1" data-fr="Nos catalogues" data-en="Our catalogs">Nos catalogues</h1>
+    <p class="text-champion-600 dark:text-creme-100/70 text-sm mt-3 max-w-md mx-auto" data-fr="Feuilletez nos catalogues en ligne ou téléchargez-les pour préparer vos courses." data-en="Browse our catalogs online or download them to plan your shopping.">
+      Feuilletez nos catalogues en ligne ou téléchargez-les pour préparer vos courses.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-7">
+    {% for catalogue in catalogues %}
+    <div class="reveal group rounded-xl3 overflow-hidden bg-white dark:bg-champion-800 shadow-sm hover:shadow-soft transition-all duration-300 hover:-translate-y-1" style="transition-delay: {{ forloop.counter0 }}00ms">
+
+      <a href="{% url 'supermarche:catalogue_detail' catalogue.pk %}" class="block aspect-[3/4] overflow-hidden relative">
+        {% if catalogue.couverture %}
+        <img src="{{ catalogue.couverture.url }}" alt="{{ catalogue.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+        {% else %}
+        <div class="w-full h-full bg-champion-100 dark:bg-champion-700 grid place-items-center text-champion-400 text-xs" data-fr="Couverture indisponible" data-en="Cover unavailable">Couverture indisponible</div>
+        {% endif %}
+
+        {% if forloop.counter0 == 0 %}
+        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-mangue-500 text-champion-900 text-[11px] font-bold" data-fr="En cours" data-en="Current">En cours</span>
+        {% endif %}
+
+        <div class="absolute inset-0 bg-champion-900/0 group-hover:bg-champion-900/50 transition-colors duration-300 flex items-center justify-center">
+          <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-2 px-4 py-2 rounded-xl2 bg-creme-50 text-champion-900 text-sm font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.437 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/></svg>
+            <span data-fr="Consulter" data-en="Browse">Consulter</span>
+          </span>
+        </div>
+      </a>
+
+      <div class="p-4">
+        <span class="text-xs text-champion-400 dark:text-champion-300/70">{{ catalogue.mois|date:"F Y"|capfirst }}</span>
+        <h3 class="font-display font-700 text-sm mt-1 leading-snug line-clamp-2">{{ catalogue.titre }}</h3>
+        {% if catalogue.nb_pages %}
+        <span class="text-[11px] text-champion-400 dark:text-champion-300/60" data-fr="{{ catalogue.nb_pages }} pages" data-en="{{ catalogue.nb_pages }} pages">{{ catalogue.nb_pages }} pages</span>
+        {% endif %}
+
+        <div class="flex items-center gap-2 mt-3">
+          <a href="{% url 'supermarche:catalogue_detail' catalogue.pk %}" class="flex-1 text-center text-xs font-semibold px-3 py-2 rounded-xl2 bg-champion-500 hover:bg-champion-600 text-creme-50 transition-colors" data-fr="Consulter" data-en="Browse">Consulter</a>
+          <a href="{{ catalogue.fichier.url }}" download class="w-9 h-9 flex-none grid place-items-center rounded-xl2 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" title="Télécharger" aria-label="Télécharger le catalogue">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 12l4.5 4.5m0 0 4.5-4.5M12 16.5V3"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+    {% empty %}
+    <p class="col-span-full text-center text-champion-400 py-16" data-fr="Aucun catalogue disponible pour le moment." data-en="No catalog available right now.">Aucun catalogue disponible pour le moment.</p>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

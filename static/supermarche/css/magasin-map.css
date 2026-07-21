@@ -1,0 +1,33 @@
+/* Neutralise l'indentation habituelle réservée au label pour ce champ précis */
+.field-carte_interactive {
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.field-carte_interactive > div,
+.field-carte_interactive .readonly {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Centre explicitement le conteneur de la carte dans l'espace disponible */
+#magasin-map {
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+.magasin-map-search {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 10px auto;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}

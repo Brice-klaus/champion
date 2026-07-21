@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Promotions — Le Champion{% endblock %}
+
+{% block content %}
+
+<!-- ══════════ EN-TÊTE ══════════ -->
+<section class="bg-hibiscus-500 text-creme-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center reveal">
+    <span class="text-xs font-semibold uppercase tracking-widest text-creme-50/80" data-fr="Nos opérations spéciales" data-en="Our special operations">Nos opérations spéciales</span>
+    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Toutes les promotions" data-en="All promotions">Toutes les promotions</h1>
+    {% if promotions_en_cours_count %}
+    <p class="text-sm text-creme-50/90 mt-3" data-fr="{{ promotions_en_cours_count }} opération{{ promotions_en_cours_count|pluralize }} en cours actuellement" data-en="{{ promotions_en_cours_count }} operation{{ promotions_en_cours_count|pluralize }} currently active">
+      {{ promotions_en_cours_count }} opération{{ promotions_en_cours_count|pluralize }} en cours actuellement
+    </p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ══════════ FILTRES STATUT ══════════ -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+  <div class="flex gap-2 overflow-x-auto pb-1 reveal">
+    <a href="?" class="flex-none px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {% if not statut_actif %}bg-champion-500 text-creme-50{% else %}bg-champion-50 dark:bg-champion-800 text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-700{% endif %}" data-fr="Toutes" data-en="All">
+      Toutes
+    </a>
+    <a href="?statut=en_cours" class="flex-none px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {% if statut_actif == 'en_cours' %}bg-champion-500 text-creme-50{% else %}bg-champion-50 dark:bg-champion-800 text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-700{% endif %}" data-fr="En cours" data-en="Current">
+      En cours
+    </a>
+    <a href="?statut=planifiee" class="flex-none px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {% if statut_actif == 'planifiee' %}bg-champion-500 text-creme-50{% else %}bg-champion-50 dark:bg-champion-800 text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-700{% endif %}" data-fr="À venir" data-en="Upcoming">
+      À venir
+    </a>
+    <a href="?statut=terminee" class="flex-none px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {% if statut_actif == 'terminee' %}bg-champion-500 text-creme-50{% else %}bg-champion-50 dark:bg-champion-800 text-champion-600 dark:text-champion-300/80 hover:bg-champion-100 dark:hover:bg-champion-700{% endif %}" data-fr="Terminées" data-en="Past">
+      Terminées
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ GRILLE PROMOTIONS ══════════ -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+
+  {% if promotions %}
+  <div class="grid md:grid-cols-3 gap-6">
+    {% for promo in promotions %}
+    <a href="{{ promo.get_absolute_url|default:'#' }}" class="reveal relative rounded-xl3 overflow-hidden text-creme-50 flex flex-col justify-between min-h-[280px] {% if not promo.image_banniere %}bg-champion-500{% endif %}" style="transition-delay: {{ forloop.counter0 }}00ms">
+
+      {% if promo.image_banniere %}
+      <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre }}" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-champion-900/55"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-champion-900/95 via-champion-900/55 to-champion-900/25"></div>
+      {% else %}
+      <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-mangue-500/25"></div>
+      {% endif %}
+
+      {% if promo.statut != "en_cours" %}
+      <div class="absolute inset-0 {% if promo.image_banniere %}bg-champion-900/35{% else %}bg-champion-900/25{% endif %}"></div>
+      {% endif %}
+
+      <div class="relative p-7 flex flex-col flex-1 justify-between [text-shadow:0_1px_6px_rgba(14,26,21,0.35)]">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            {% if promo.statut == "en_cours" %}
+            <span class="inline-block px-2.5 py-1 rounded-full bg-mangue-500 text-champion-900 text-[11px] font-bold [text-shadow:none]" data-fr="EN COURS" data-en="ACTIVE">EN COURS</span>
+            {% elif promo.statut == "planifiee" %}
+            <span class="inline-block px-2.5 py-1 rounded-full bg-champion-100 text-champion-800 text-[11px] font-bold [text-shadow:none]" data-fr="À VENIR" data-en="UPCOMING">À VENIR</span>
+            {% elif promo.statut == "terminee" %}
+            <span class="inline-block px-2.5 py-1 rounded-full bg-champion-900/70 text-creme-100 text-[11px] font-bold [text-shadow:none]" data-fr="TERMINÉE" data-en="ENDED">TERMINÉE</span>
+            {% else %}
+            <span class="inline-block px-2.5 py-1 rounded-full bg-hibiscus-500 text-creme-50 text-[11px] font-bold [text-shadow:none]" data-fr="ANNULÉE" data-en="CANCELLED">ANNULÉE</span>
+            {% endif %}
+            <span class="text-[11px] font-medium text-creme-50/95" data-fr="{{ promo.date_debut|date:'d M' }} → {{ promo.date_fin|date:'d M' }}" data-en="{{ promo.date_debut|date:'M d' }} → {{ promo.date_fin|date:'M d' }}">
+              {{ promo.date_debut|date:"d M" }} → {{ promo.date_fin|date:"d M" }}
+            </span>
+          </div>
+          <h3 class="font-display font-700 text-xl leading-snug text-creme-50">{{ promo.titre }}</h3>
+          {% if promo.description %}
+          <p class="text-creme-50/95 text-sm mt-2 line-clamp-2">{{ promo.description }}</p>
+          {% endif %}
+
+          <div class="flex flex-wrap gap-x-4 gap-y-1.5 mt-4 text-[11px] font-medium text-creme-50/90">
+            {% if promo.produits.count %}
+            <span class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4l1 13h14l1-13ZM8 7V5a4 4 0 0 1 8 0v2"/></svg>
+              <span data-fr="{{ promo.produits.count }} produits" data-en="{{ promo.produits.count }} products">{{ promo.produits.count }} produits</span>
+            </span>
+            {% endif %}
+            <span class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5 12 4l9 6.5M5 9.5V20h14V9.5"/></svg>
+              {% if promo.magasins.count %}
+              <span data-fr="{{ promo.magasins.count }} magasins" data-en="{{ promo.magasins.count }} stores">{{ promo.magasins.count }} magasins</span>
+              {% else %}
+              <span data-fr="Tous les magasins" data-en="All stores">Tous les magasins</span>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+
+        <span class="mt-6 inline-flex items-center gap-1 font-semibold text-sm text-creme-50 hover:gap-2 transition-all" data-fr="{% if promo.statut == 'terminee' %}Voir le récapitulatif{% else %}Voir les produits{% endif %}" data-en="{% if promo.statut == 'terminee' %}View recap{% else %}View products{% endif %}">
+          {% if promo.statut == "terminee" %}Voir le récapitulatif{% else %}Voir les produits{% endif %} →
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- ---------- Pagination ---------- -->
+  {% if is_paginated %}
+  <div class="flex items-center justify-center gap-2 mt-14 reveal">
+
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if statut_actif %}&statut={{ statut_actif }}{% endif %}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page précédente">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    {% else %}
+    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </span>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+      {% if num == page_obj.number %}
+      <span class="w-10 h-10 grid place-items-center rounded-xl2 bg-hibiscus-500 text-creme-50 font-semibold text-sm">{{ num }}</span>
+      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+      <a href="?page={{ num }}{% if statut_actif %}&statut={{ statut_actif }}{% endif %}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
+      {% elif num == 1 or num == paginator.num_pages %}
+      <a href="?page={{ num }}{% if statut_actif %}&statut={{ statut_actif }}{% endif %}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
+      {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+      <span class="w-10 h-10 grid place-items-center text-champion-300 text-sm">…</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if statut_actif %}&statut={{ statut_actif }}{% endif %}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page suivante">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </a>
+    {% else %}
+    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </span>
+    {% endif %}
+
+  </div>
+  {% endif %}
+
+  {% else %}
+  <!-- ---------- Etat vide ---------- -->
+  <div class="text-center py-20 reveal">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-champion-50 dark:bg-champion-800 grid place-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-champion-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/></svg>
+    </div>
+    <p class="text-champion-500 text-sm" data-fr="Aucune promotion ne correspond à ce filtre." data-en="No promotion matches this filter.">Aucune promotion ne correspond à ce filtre.</p>
+    <a href="?" class="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Voir toutes les promotions" data-en="View all promotions">Voir toutes les promotions →</a>
+  </div>
+  {% endif %}
+
+</section>
+
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}
