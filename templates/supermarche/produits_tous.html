@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Nouveautés — Le Champion{% endblock %}
+{% block title %}Tous nos produits — Le Champion{% endblock %}
 
 {% block content %}
 
@@ -9,9 +9,9 @@
 <section class="bg-nuit-900 text-creme-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center reveal">
     <span class="text-xs font-semibold uppercase tracking-widest text-mangue-500" data-fr="Fraîchement arrivé" data-en="Freshly arrived">Fraîchement arrivé</span>
-    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Toutes nos nouveautés" data-en="All new arrivals">Toutes nos nouveautés</h1>
-    <p class="text-sm text-white/70 mt-3" data-fr="{{ paginator.count }} nouveau{{ paginator.count|pluralize:',x' }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}" data-en="{{ paginator.count }} new product{{ paginator.count|pluralize }} recently added">
-      {{ paginator.count }} nouveau{{ paginator.count|pluralize:",x" }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}
+    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Touts nos  produits" data-en="All new arrivals">Toutes nos nouveautés</h1>
+    <p class="text-sm text-white/70 mt-3" data-fr="{{ paginator.count }} Tous nos produits{{ paginator.count|pluralize:',x' }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}" data-en="{{ paginator.count }} new product{{ paginator.count|pluralize }} recently added">
+      {{ paginator.count }} Tous nos produits{{ paginator.count|pluralize:",x" }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}
     </p>
   </div>
 </section>

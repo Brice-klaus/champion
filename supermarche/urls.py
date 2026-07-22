@@ -51,6 +51,10 @@ urlpatterns = [
     path("recherche/", views.RechercheView.as_view(), name="recherche"),
     path("rayoncategorie_detail/<slug:slug>/", views.RayonCategorieDetailView.as_view(), name="rayoncategorie_detail"),
     
+    path("produits/coups-de-coeur/", views.ProduitsCoupsDeCoeurView.as_view(), name="produits_coups_de_coeur"),
+    path("produits/tous/", views.ProduitsTousView.as_view(), name="produits_tous"),
+    
+    
     
     path("panier/", views.PanierView.as_view(), name="panier"),
     path("panier/modifier/<int:produit_id>/", views.PanierModifierView.as_view(), name="panier_modifier"),

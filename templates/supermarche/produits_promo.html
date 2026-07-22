@@ -1,83 +1,220 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Produits en promotion — Le Champion{% endblock %}
+{% block title %}Produits promotion — Le Champion{% endblock %}
 
 {% block content %}
 
 <!-- ══════════ EN-TÊTE ══════════ -->
-<section class="bg-hibiscus-500 text-creme-50">
+<section class="bg-nuit-900 text-creme-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center reveal">
-    <span class="text-xs font-semibold uppercase tracking-widest text-creme-50/80" data-fr="Prix cassés" data-en="Slashed prices">Prix cassés</span>
-    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Toutes nos promotions" data-en="All our deals">Toutes nos promotions</h1>
-    <p class="text-sm text-creme-50/90 mt-3" data-fr="{{ paginator.count }} produit{{ paginator.count|pluralize }} actuellement en promotion" data-en="{{ paginator.count }} product{{ paginator.count|pluralize }} currently on sale">
-      {{ paginator.count }} produit{{ paginator.count|pluralize }} actuellement en promotion
+    <span class="text-xs font-semibold uppercase tracking-widest text-mangue-500" data-fr="Fraîchement arrivé" data-en="Freshly arrived">Fraîchement arrivé</span>
+    <h1 class="font-display font-800 text-3xl md:text-4xl mt-2" data-fr="Produits promotion" data-en="All new arrivals">Toutes nos nouveautés</h1>
+    <p class="text-sm text-white/70 mt-3" data-fr="{{ paginator.count }} Produits promotion{{ paginator.count|pluralize:',x' }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}" data-en="{{ paginator.count }} new product{{ paginator.count|pluralize }} recently added">
+      {{ paginator.count }} Produits promotion {{ paginator.count|pluralize:",x" }} produit{{ paginator.count|pluralize }} récemment ajouté{{ paginator.count|pluralize }}
     </p>
   </div>
 </section>
 
-<!-- ══════════ GRILLE PRODUITS ══════════ -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+  <div class="grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-10">
 
-  {% if produits %}
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6">
-    {% for produit in produits %}
-    <div class="reveal" style="transition-delay: {{ forloop.counter0 }}0ms">
-      {% include "supermarche/partials/product_card.html" with produit=produit %}
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- ---------- Pagination ---------- -->
-  {% if is_paginated %}
-  <div class="flex items-center justify-center gap-2 mt-14 reveal">
-
-    {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page précédente">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-    </a>
-    {% else %}
-    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    <!-- ══════════ BOUTON FILTRES (mobile) ══════════ -->
+    <div class="lg:hidden reveal">
+  <button type="button" id="filtres-toggle"
+    class="w-full flex items-center justify-between px-4 py-3 rounded-xl2 border-2 border-champion-200 dark:border-nuit-600 bg-white dark:bg-nuit-800 shadow-[0_2px_14px_-6px_rgba(18,60,42,0.10)] dark:shadow-softdark text-sm font-semibold">
+    <span class="flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"/></svg>
+      <span data-fr="Filtres" data-en="Filters">Filtres</span>
     </span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform" id="filtres-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+  </button>
+</div>
+
+    <!-- ══════════ PANNEAU FILTRES ══════════ -->
+    <!-- ══════════ PANNEAU FILTRES ══════════ -->
+<aside id="filtres-panel" class="hidden lg:block reveal">
+  <form method="get" id="form-filtres"
+        class="lg:sticky lg:top-24 bg-white dark:bg-nuit-800 rounded-xl3 border border-champion-200 dark:border-nuit-600 shadow-[0_2px_14px_-6px_rgba(18,60,42,0.10)] dark:shadow-softdark p-5 space-y-6">
+
+    <!-- Sous-catégorie -->
+    {% if sous_categories %}
+    <div class="pb-5 border-b border-champion-100 dark:border-nuit-700">
+      <h2 class="font-display font-700 text-sm uppercase tracking-wide text-champion-500 mb-3" data-fr="Sous-catégorie" data-en="Subcategory">Sous-catégorie</h2>
+      <div class="space-y-1">
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="radio" name="sous_categorie" value="" {% if not sous_categorie_actuelle %}checked{% endif %} class="accent-champion-500">
+          <span data-fr="Toutes" data-en="All">Toutes</span>
+        </label>
+        {% for sc in sous_categories %}
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="radio" name="sous_categorie" value="{{ sc.slug }}" {% if sous_categorie_actuelle == sc.slug %}checked{% endif %} class="accent-champion-500">
+          <span>{{ sc.nom }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
     {% endif %}
 
-    {% for num in paginator.page_range %}
-      {% if num == page_obj.number %}
-      <span class="w-10 h-10 grid place-items-center rounded-xl2 bg-hibiscus-500 text-creme-50 font-semibold text-sm">{{ num }}</span>
-      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-      <a href="?page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
-      {% elif num == 1 or num == paginator.num_pages %}
-      <a href="?page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 text-sm font-medium transition-colors">{{ num }}</a>
-      {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
-      <span class="w-10 h-10 grid place-items-center text-champion-300 text-sm">…</span>
+    <!-- Marque -->
+    {% if marques %}
+    <div class="pb-5 border-b border-champion-100 dark:border-nuit-700">
+      <h2 class="font-display font-700 text-sm uppercase tracking-wide text-champion-500 mb-3" data-fr="Marque" data-en="Brand">Marque</h2>
+      <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="radio" name="marque" value="" {% if not marque_actuelle %}checked{% endif %} class="accent-champion-500">
+          <span data-fr="Toutes" data-en="All">Toutes</span>
+        </label>
+        {% for m in marques %}
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="radio" name="marque" value="{{ m.slug }}" {% if marque_actuelle == m.slug %}checked{% endif %} class="accent-champion-500">
+          <span>{{ m.nom }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Fourchette de prix -->
+    <div class="pb-5 border-b border-champion-100 dark:border-nuit-700">
+      <h2 class="font-display font-700 text-sm uppercase tracking-wide text-champion-500 mb-3" data-fr="Prix (FCFA)" data-en="Price (FCFA)">Prix (FCFA)</h2>
+      <div class="flex items-center gap-2">
+        <input type="number" name="prix_min" value="{{ prix_min_actuel }}" placeholder="Min"
+               class="w-full text-sm rounded-xl2 border-2 border-champion-200 dark:border-nuit-600 bg-creme-50 dark:bg-nuit-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-500 focus:border-champion-500">
+        <span class="text-champion-300 dark:text-nuit-400">—</span>
+        <input type="number" name="prix_max" value="{{ prix_max_actuel }}" placeholder="Max"
+               class="w-full text-sm rounded-xl2 border-2 border-champion-200 dark:border-nuit-600 bg-creme-50 dark:bg-nuit-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-500 focus:border-champion-500">
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div>
+      <h2 class="font-display font-700 text-sm uppercase tracking-wide text-champion-500 mb-3" data-fr="Caractéristiques" data-en="Features">Caractéristiques</h2>
+      <div class="space-y-1">
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="checkbox" name="bio" value="1" {% if bio_actif %}checked{% endif %} class="accent-champion-500 rounded">
+          <span data-fr="Bio" data-en="Organic">Bio</span>
+        </label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="checkbox" name="local" value="1" {% if local_actif %}checked{% endif %} class="accent-champion-500 rounded">
+          <span data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</span>
+        </label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer text-corps-produit">
+          <input type="checkbox" name="disponible" value="1" {% if disponible_actif %}checked{% endif %} class="accent-champion-500 rounded">
+          <span data-fr="En stock uniquement" data-en="In stock only">En stock uniquement</span>
+        </label>
+      </div>
+    </div>
+
+    {% if tri_actuel != "pertinence" %}
+    <input type="hidden" name="tri" value="{{ tri_actuel }}">
+    {% endif %}
+
+    <div class="flex gap-2 pt-1">
+      <button type="submit" class="flex-1 px-4 py-2.5 rounded-xl2 bg-champion-500 hover:bg-champion-600 text-creme-50 font-semibold text-sm transition-colors" data-fr="Appliquer" data-en="Apply">Appliquer</button>
+      <a href="{% url 'supermarche:produits_nouveautes' %}" class="px-4 py-2.5 rounded-xl2 border-2 border-champion-200 dark:border-nuit-600 text-sm font-medium hover:bg-champion-50 dark:hover:bg-nuit-700 transition-colors" data-fr="Réinitialiser" data-en="Reset">Réinitialiser</a>
+    </div>
+  </form>
+</aside>
+
+    <!-- ══════════ CONTENU ══════════ -->
+    <div>
+
+      <!-- Barre de tri -->
+      <div class="flex items-center justify-between mb-6 reveal">
+        <span class="text-sm text-corps-produit" data-fr="{{ paginator.count }} résultat{{ paginator.count|pluralize }}" data-en="{{ paginator.count }} result{{ paginator.count|pluralize }}">
+          {{ paginator.count }} résultat{{ paginator.count|pluralize }}
+        </span>
+        <form method="get" class="flex items-center gap-2">
+          {% if sous_categorie_actuelle %}<input type="hidden" name="sous_categorie" value="{{ sous_categorie_actuelle }}">{% endif %}
+          {% if marque_actuelle %}<input type="hidden" name="marque" value="{{ marque_actuelle }}">{% endif %}
+          {% if bio_actif %}<input type="hidden" name="bio" value="1">{% endif %}
+          {% if local_actif %}<input type="hidden" name="local" value="1">{% endif %}
+          {% if disponible_actif %}<input type="hidden" name="disponible" value="1">{% endif %}
+          {% if prix_min_actuel %}<input type="hidden" name="prix_min" value="{{ prix_min_actuel }}">{% endif %}
+          {% if prix_max_actuel %}<input type="hidden" name="prix_max" value="{{ prix_max_actuel }}">{% endif %}
+          <select name="tri" onchange="this.form.submit()"
+                  class="text-sm rounded-xl2 border border-champion-100 dark:border-nuit-600 bg-transparent px-3 py-2 focus:outline-none focus:ring-2 focus:ring-champion-500">
+            <option value="pertinence" {% if tri_actuel == "pertinence" %}selected{% endif %}>Pertinence</option>
+            <option value="recent" {% if tri_actuel == "recent" %}selected{% endif %}>Plus récent</option>
+            <option value="prix_asc" {% if tri_actuel == "prix_asc" %}selected{% endif %}>Prix croissant</option>
+            <option value="prix_desc" {% if tri_actuel == "prix_desc" %}selected{% endif %}>Prix décroissant</option>
+            <option value="nom" {% if tri_actuel == "nom" %}selected{% endif %}>Nom (A-Z)</option>
+          </select>
+        </form>
+      </div>
+
+      {% if produits %}
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
+        {% for produit in produits %}
+        <div class="reveal" style="transition-delay: {{ forloop.counter0 }}0ms">
+          {% include "supermarche/partials/product_card.html" with produit=produit %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+      <div class="flex items-center justify-center gap-2 mt-14 reveal">
+        {% if page_obj.has_previous %}
+        <a href="?{% if querystring_sans_page %}{{ querystring_sans_page }}&{% endif %}page={{ page_obj.previous_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-nuit-800 border border-champion-200 dark:border-nuit-600 hover:bg-champion-50 dark:hover:bg-nuit-700 transition-colors" aria-label="Page précédente">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        {% else %}
+        <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-nuit-700 text-champion-200 dark:text-nuit-600 cursor-not-allowed">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </span>
+        {% endif %}
+
+        {% for num in paginator.page_range %}
+          {% if num == page_obj.number %}
+          <span class="w-10 h-10 grid place-items-center rounded-xl2 bg-champion-500 text-creme-50 font-semibold text-sm">{{ num }}</span>
+          {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+          <a href="?{% if querystring_sans_page %}{{ querystring_sans_page }}&{% endif %}page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-nuit-800 border border-champion-200 dark:border-nuit-600 hover:bg-champion-50 dark:hover:bg-nuit-700 text-sm font-medium transition-colors">{{ num }}</a>
+          {% elif num == 1 or num == paginator.num_pages %}
+          <a href="?{% if querystring_sans_page %}{{ querystring_sans_page }}&{% endif %}page={{ num }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-nuit-800 border border-champion-200 dark:border-nuit-600 hover:bg-champion-50 dark:hover:bg-nuit-700 text-sm font-medium transition-colors">{{ num }}</a>
+          {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+          <span class="w-10 h-10 grid place-items-center text-champion-300 dark:text-nuit-400 text-sm">…</span>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?{% if querystring_sans_page %}{{ querystring_sans_page }}&{% endif %}page={{ page_obj.next_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-nuit-800 border border-champion-200 dark:border-nuit-600 hover:bg-champion-50 dark:hover:bg-nuit-700 transition-colors" aria-label="Page suivante">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        {% else %}
+        <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-nuit-700 text-champion-200 dark:text-nuit-600 cursor-not-allowed">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </span>
+        {% endif %}
+      </div>
       {% endif %}
-    {% endfor %}
 
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page suivante">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-    </a>
-    {% else %}
-    <span class="w-10 h-10 grid place-items-center rounded-xl2 border border-champion-100 dark:border-champion-700 text-champion-200 dark:text-champion-600 cursor-not-allowed">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-    </span>
-    {% endif %}
+      {% else %}
+      <div class="text-center py-20 reveal">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-champion-50 dark:bg-nuit-800 grid place-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-champion-300 dark:text-nuit-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+        </div>
+        <p class="text-corps-produit text-sm" data-fr="Aucune nouveauté ne correspond à ces filtres." data-en="No new arrival matches these filters.">Aucune nouveauté ne correspond à ces filtres.</p>
+        <a href="{% url 'supermarche:produits_nouveautes' %}" class="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Réinitialiser les filtres" data-en="Reset filters">Réinitialiser les filtres →</a>
+      </div>
+      {% endif %}
 
-  </div>
-  {% endif %}
-
-  {% else %}
-  <!-- ---------- Etat vide ---------- -->
-  <div class="text-center py-20 reveal">
-    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-champion-50 dark:bg-champion-800 grid place-items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-champion-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.284a1.5 1.5 0 0 1-1.5 1.5h-2.25m-7.5-11.128V6a1.5 1.5 0 0 0-1.5-1.5H4.5A1.5 1.5 0 0 0 3 6v9a1.5 1.5 0 0 0 1.5 1.5h1.5m6-9v9a1.5 1.5 0 0 1-1.5 1.5h-3"/></svg>
     </div>
-    <p class="text-champion-500 text-sm" data-fr="Aucune promotion en cours pour le moment." data-en="No current promotions right now.">Aucune promotion en cours pour le moment.</p>
-    <a href="{% url 'supermarche:catalogue_accueil' %}" class="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Retour au catalogue" data-en="Back to catalog">Retour au catalogue →</a>
   </div>
-  {% endif %}
-
 </section>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const toggle = document.getElementById('filtres-toggle');
+  const panel = document.getElementById('filtres-panel');
+  const chevron = document.getElementById('filtres-chevron');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    });
+  }
+</script>
 {% endblock %}

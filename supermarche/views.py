@@ -38,7 +38,7 @@ from django.utils import timezone
 from django.http import JsonResponse, Http404
 
 from .models import (
-    ParametresSite, Ville, Magasin,
+    ParametresSite, Ville, Magasin,Marque,
     RayonCategorie, SousCategorie, Produit,
     Promotion, CatalogueNumerique,
     BanniereHero, BanniereSecondaire,
@@ -550,53 +550,123 @@ class ProduitDetailView(ContextSiteMixin, DetailView):
         return ctx
 
 
-class ProduitsPromoView(ContextSiteMixin, ListView):
+class ProduitFiltreMixin:
+    """
+    Mixin factorisant la logique de filtres (marque, sous-catégorie,
+    prix, badges, tri) commune à toutes les vues de listing produits.
+    Chaque vue fille définit `filtre_base` pour restreindre le queryset
+    de départ (nouveautés, locaux, coups de cœur, promo, ou aucun filtre).
+    """
+    paginate_by = 24
+    context_object_name = "produits"
+
+    filtre_base = {}  # ex: {"est_nouveau": True} — surchargé par vue fille
+
+    def get_base_queryset(self):
+        return (
+            Produit.objects
+            .filter(est_visible=True, **self.filtre_base)
+            .select_related("marque", "sous_categorie__categorie")
+        )
+
+    def get_queryset(self):
+        qs = self.get_base_queryset()
+
+        marque_slug = self.request.GET.get("marque")
+        if marque_slug:
+            qs = qs.filter(marque__slug=marque_slug)
+
+        sous_categorie_slug = self.request.GET.get("sous_categorie")
+        if sous_categorie_slug:
+            qs = qs.filter(sous_categorie__slug=sous_categorie_slug)
+
+        if self.request.GET.get("bio") == "1":
+            qs = qs.filter(est_bio=True)
+        if self.request.GET.get("local") == "1":
+            qs = qs.filter(est_local=True)
+        if self.request.GET.get("disponible") == "1":
+            qs = qs.filter(est_disponible=True)
+
+        prix_min = self.request.GET.get("prix_min")
+        prix_max = self.request.GET.get("prix_max")
+        if prix_min:
+            qs = qs.filter(prix_public__gte=prix_min)
+        if prix_max:
+            qs = qs.filter(prix_public__lte=prix_max)
+
+        tri = self.request.GET.get("tri", "pertinence")
+        ordres = {
+            "pertinence": "ordre",
+            "prix_asc": "prix_public",
+            "prix_desc": "-prix_public",
+            "recent": "-created_at",
+            "nom": "nom",
+        }
+        return qs.order_by(ordres.get(tri, "ordre"))
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        base_qs = self.get_base_queryset()
+
+        ctx["marques"] = (
+            Marque.objects
+            .filter(produits__in=base_qs)
+            .distinct()
+            .order_by("nom")
+        )
+        ctx["sous_categories"] = (
+            SousCategorie.objects
+            .filter(produits__in=base_qs)
+            .distinct()
+            .order_by("nom")
+        )
+
+        ctx["marque_actuelle"] = self.request.GET.get("marque", "")
+        ctx["sous_categorie_actuelle"] = self.request.GET.get("sous_categorie", "")
+        ctx["bio_actif"] = self.request.GET.get("bio") == "1"
+        ctx["local_actif"] = self.request.GET.get("local") == "1"
+        ctx["disponible_actif"] = self.request.GET.get("disponible") == "1"
+        ctx["prix_min_actuel"] = self.request.GET.get("prix_min", "")
+        ctx["prix_max_actuel"] = self.request.GET.get("prix_max", "")
+        ctx["tri_actuel"] = self.request.GET.get("tri", "pertinence")
+
+        params = self.request.GET.copy()
+        params.pop("page", None)
+        ctx["querystring_sans_page"] = params.urlencode()
+
+        return ctx
+
+class ProduitsPromoView(ProduitFiltreMixin, ContextSiteMixin, ListView):
     """Tous les produits actuellement en promotion."""
-    template_name       = "supermarche/produits_promo.html"
-    context_object_name = "produits"
-    paginate_by         = 24
-
-    def get_queryset(self):
-        return (
-            Produit.objects
-            .filter(est_en_promo=True, est_visible=True, est_disponible=True)
-            .select_related("marque", "sous_categorie__categorie")
-            .order_by("ordre")
-        )
+    template_name = "supermarche/produits_promo.html"
+    filtre_base = {"est_en_promo": True}
 
 
 
 
 
-class ProduitsNouveautesView(ContextSiteMixin, ListView):
-    """Dernières nouveautés du catalogue."""
-    template_name       = "supermarche/nouveautes.html"
-    context_object_name = "produits"
-    paginate_by         = 24
-
-    def get_queryset(self):
-        return (
-            Produit.objects
-            .filter(est_nouveau=True, est_visible=True, est_disponible=True)
-            .select_related("marque", "sous_categorie__categorie")
-            .order_by("-created_at")
-        )
+class ProduitsNouveautesView(ProduitFiltreMixin, ContextSiteMixin, ListView):
+    """Produits marqués nouveauté."""
+    template_name = "supermarche/nouveautes.html"
+    filtre_base = {"est_nouveau": True}
 
 
-class ProduitsLocauxView(ContextSiteMixin, ListView):
+class ProduitsLocauxView(ProduitFiltreMixin, ContextSiteMixin, ListView):
     """Produits made in Togo mis en avant."""
-    template_name       = "supermarche/produits_locaux.html"
-    context_object_name = "produits"
-    paginate_by         = 24
+    template_name = "supermarche/produits_locaux.html"
+    filtre_base = {"est_local": True}
 
-    def get_queryset(self):
-        return (
-            Produit.objects
-            .filter(est_local=True, est_visible=True, est_disponible=True)
-            .select_related("marque", "sous_categorie__categorie")
-            .order_by("ordre")
-        )
 
+class ProduitsCoupsDeCoeurView(ProduitFiltreMixin, ContextSiteMixin, ListView):
+    """Sélection coups de cœur de l'équipe."""
+    template_name = "supermarche/produits_coups_de_coeur.html"
+    filtre_base = {"est_coup_de_coeur": True}
+    
+    
+class ProduitsTousView(ProduitFiltreMixin, ContextSiteMixin, ListView):
+    """Catalogue complet, sans filtre de base."""
+    template_name = "supermarche/produits_tous.html"
+    filtre_base = {}
 
 # ══════════════════════════════════════════════════════════════
 # 4. PROMOTIONS & CATALOGUES NUMÉRIQUES

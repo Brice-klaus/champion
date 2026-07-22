@@ -140,6 +140,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",   # {{ STATIC_URL }}
                 "django.template.context_processors.i18n",
                 "supermarche.context_processors.panier_context",  # ← ajout
+                "supermarche.context_processors.nav_active_context",  # ← ajout
             ],
         },
     },

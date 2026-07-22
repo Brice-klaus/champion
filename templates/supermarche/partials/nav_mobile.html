@@ -1,55 +1,73 @@
 <div id="mobile-menu" class="lg:hidden hidden border-t border-champion-100 dark:border-nuit-600/50 bg-creme-50 dark:bg-nuit-900">
   <nav class="flex flex-col px-4 py-3 gap-1 font-medium text-sm">
 
-    <a href="{% url 'supermarche:accueil' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800" data-fr="Accueil" data-en="Home">Accueil</a>
+    <a href="{% url 'supermarche:accueil' %}"
+       class="py-2.5 px-2 rounded-lg transition-colors {% if nav_view_name == 'supermarche:accueil' %}bg-champion-100 dark:bg-nuit-800 text-champion-600 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}"
+       data-fr="Accueil" data-en="Home">Accueil</a>
 
     <!-- Accordéon Rayons (niveau 1) -->
-    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800 text-left" data-target="acc-rayons">
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg text-left transition-colors {% if nav_rayons_actif %}bg-champion-100 dark:bg-nuit-800 text-champion-600 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-target="acc-rayons">
       <span data-fr="Rayons" data-en="Aisles">Rayons</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 {% if nav_rayons_actif %}rotate-180 text-champion-500{% else %}text-champion-400{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
     </button>
-    <div id="acc-rayons" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
+    <div id="acc-rayons" class="{% if not nav_rayons_actif %}hidden{% endif %} pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
       {% for cat in categories_nav %}
         {% if cat.sous_categories.all %}
         <button type="button" class="accordion-toggle flex items-center justify-between py-2 px-2 rounded-lg text-champion-700 dark:text-white hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm text-left" data-target="acc-cat-{{ cat.pk }}">
           <span>{{ cat.nom }}</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-champion-300 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
         </button>
-        <div id="acc-cat-{{ cat.pk }}" class="hidden pl-3 flex flex-col gap-0.5 pb-1 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
-          <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}" class="py-1.5 px-2 rounded-lg text-champion-500 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-xs font-semibold" data-fr="Tout voir" data-en="See all">Tout voir</a>
+        <div id="acc-cat-{{ cat.pk }}" class="hidden pl-4 ml-3 flex flex-col gap-0.5 pb-1 border-l border-champion-100 dark:border-nuit-600/50">
+          <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}"
+             class="py-1.5 px-2 rounded-lg text-xs font-semibold transition-colors {% if nav_rayons_actif and request.resolver_match.kwargs.slug == cat.slug and not request.GET.sous_categorie %}text-champion-600 bg-champion-100 dark:bg-nuit-700{% else %}text-champion-500 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}"
+             data-fr="Tout voir" data-en="See all">Tout voir</a>
           {% for sc in cat.sous_categories.all %}
-          <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}?sous_categorie={{ sc.slug }}" class="py-1.5 px-2 rounded-lg text-champion-500 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-xs">{{ sc.nom }}</a>
+          <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}?sous_categorie={{ sc.slug }}"
+             class="py-1.5 px-2 rounded-lg text-xs transition-colors {% if nav_rayons_actif and request.resolver_match.kwargs.slug == cat.slug and request.GET.sous_categorie == sc.slug %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-black dark:text-white/80 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}">
+            {{ sc.nom }}
+          </a>
           {% endfor %}
         </div>
         {% else %}
-        <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm">{{ cat.nom }}</a>
+        <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}"
+           class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_rayons_actif and request.resolver_match.kwargs.slug == cat.slug %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}">
+          {{ cat.nom }}
+        </a>
         {% endif %}
       {% endfor %}
     </div>
 
     <!-- Accordéon Produits (niveau 1) -->
-    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800 text-left" data-target="acc-produits">
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg text-left transition-colors {% if nav_produits_actif %}bg-champion-100 dark:bg-nuit-800 text-champion-600 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-target="acc-produits">
       <span data-fr="Produits" data-en="Products">Produits</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 {% if nav_produits_actif %}rotate-180 text-champion-500{% else %}text-champion-400{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
     </button>
-    <div id="acc-produits" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
-      <a href="{% url 'supermarche:produits_nouveautes' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm" data-fr="Nouveautés" data-en="New arrivals">Nouveautés</a>
-      <a href="{% url 'supermarche:produits_locaux' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm" data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</a>
+    <div id="acc-produits" class="{% if not nav_produits_actif %}hidden{% endif %} pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
+      <a href="{% url 'supermarche:produits_tous' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:produits_tous' %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Tous les produits" data-en="All products">Tous les produits</a>
+      <a href="{% url 'supermarche:produits_nouveautes' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:produits_nouveautes' %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Nouveautés" data-en="New arrivals">Nouveautés</a>
+      <a href="{% url 'supermarche:produits_coups_de_coeur' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:produits_coups_de_coeur' %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Coups de cœur" data-en="Our favorites">Coups de cœur</a>
+      <a href="{% url 'supermarche:produits_locaux' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:produits_locaux' %}text-champion-600 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</a>
     </div>
 
     <!-- Accordéon Promotions (niveau 1) -->
-    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800 text-left" data-target="acc-promotions">
+    <button type="button" class="accordion-toggle flex items-center justify-between py-2.5 px-2 rounded-lg text-left transition-colors {% if nav_promos_actif %}bg-hibiscus-50 dark:bg-nuit-800 text-hibiscus-500 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-target="acc-promotions">
       <span data-fr="Promotions" data-en="Deals">Promotions</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-champion-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 {% if nav_promos_actif %}rotate-180 text-hibiscus-500{% else %}text-champion-400{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
     </button>
-    <div id="acc-promotions" class="hidden pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
-      <a href="{% url 'supermarche:promotions_liste' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm" data-fr="Toutes les opérations" data-en="All operations">Toutes les opérations</a>
-      <a href="{% url 'supermarche:promotions_liste' %}?statut=en_cours" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm" data-fr="En cours" data-en="Currently active">En cours</a>
-      <a href="{% url 'supermarche:produits_promo' %}" class="py-2 px-2 rounded-lg text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800 text-sm" data-fr="Produits en promo" data-en="Discounted products">Produits en promo</a>
+    <div id="acc-promotions" class="{% if not nav_promos_actif %}hidden{% endif %} pl-3 flex flex-col gap-0.5 pb-2 border-l border-champion-100 dark:border-nuit-600/50 ml-2">
+      <a href="{% url 'supermarche:promotions_liste' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:promotions_liste' and not request.GET.statut %}text-hibiscus-500 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Toutes les opérations" data-en="All operations">Toutes les opérations</a>
+      <a href="{% url 'supermarche:promotions_liste' %}?statut=en_cours" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:promotions_liste' and request.GET.statut == 'en_cours' %}text-hibiscus-500 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="En cours" data-en="Currently active">En cours</a>
+      <a href="{% url 'supermarche:produits_promo' %}" class="py-2 px-2 rounded-lg text-sm transition-colors {% if nav_view_name == 'supermarche:produits_promo' %}text-hibiscus-500 font-semibold bg-champion-100 dark:bg-nuit-700{% else %}text-champion-600 dark:text-nuit-300 hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}" data-fr="Produits en promo" data-en="Discounted products">Produits en promo</a>
     </div>
 
-    <a href="{% url 'supermarche:catalogues_liste' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800" data-fr="Catalogues" data-en="Catalogs">Catalogues</a>
-    <a href="{% url 'supermarche:magasin_liste' %}" class="py-2.5 px-2 rounded-lg hover:bg-champion-100 dark:hover:bg-nuit-800" data-fr="Magasins" data-en="Stores">Magasins</a>
+    <a href="{% url 'supermarche:catalogues_liste' %}"
+       class="py-2.5 px-2 rounded-lg transition-colors {% if nav_view_name == 'supermarche:catalogues_liste' or nav_view_name == 'supermarche:catalogue_detail' %}bg-champion-100 dark:bg-nuit-800 text-champion-600 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}"
+       data-fr="Catalogues" data-en="Catalogs">Catalogues</a>
+
+    <a href="{% url 'supermarche:magasin_liste' %}"
+       class="py-2.5 px-2 rounded-lg transition-colors {% if nav_view_name == 'supermarche:magasin_liste' or nav_view_name == 'supermarche:magasin_detail' %}bg-champion-100 dark:bg-nuit-800 text-champion-600 font-semibold{% else %}hover:bg-champion-100 dark:hover:bg-nuit-800{% endif %}"
+       data-fr="Magasins" data-en="Stores">Magasins</a>
+
   </nav>
 </div>
 
