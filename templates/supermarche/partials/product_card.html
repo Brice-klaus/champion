@@ -3,12 +3,12 @@
   Usage : {% include "partials/product_card.html" with produit=p %}
 {% endcomment %}
 
-<article class="group relative flex flex-col bg-white dark:bg-champion-800/90 rounded-[28px] overflow-hidden border border-champion-100/60 dark:border-champion-700/40 shadow-[0_2px_14px_-6px_rgba(18,60,42,0.10)] hover:shadow-[0_16px_40px_-14px_rgba(18,60,42,0.22)] dark:hover:shadow-[0_16px_40px_-14px_rgba(0,0,0,0.55)] transition-all duration-500 ease-out hover:-translate-y-1.5">
+<article class="group relative flex flex-col bg-white dark:bg-nuit-800 rounded-[28px] overflow-hidden border border-champion-100/60 dark:border-nuit-600/50 shadow-[0_2px_14px_-6px_rgba(18,60,42,0.10)] hover:shadow-[0_16px_40px_-14px_rgba(18,60,42,0.22)] dark:hover:shadow-[0_16px_40px_-14px_rgba(0,0,0,0.55)] transition-all duration-500 ease-out hover:-translate-y-1.5">
 
   <!-- Image -->
-  <a href="{% url 'supermarche:produit_detail' produit.slug%}" class="relative block aspect-square bg-creme-100/70 dark:bg-champion-900/50 overflow-hidden {% if not produit.est_disponible %}opacity-60{% endif %}">
+  <a href="{% url 'supermarche:produit_detail' produit.slug%}" class="relative block aspect-square bg-creme-100/70 dark:bg-nuit-900/50 overflow-hidden {% if not produit.est_disponible %}opacity-60{% endif %}">
     {% if produit.image_principale %}
-    <img src="{{ produit.image_principale.url }}" alt="{{ produit.nom }}"
+    <img src="{{ produit.image_principale.url }}" alt="{{ produit.nom_fr }}"
          class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]">
     {% else %}
     <div class="w-full h-full grid place-items-center text-champion-300 text-xs">Photo</div>
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Favori -->
-    <button type="button" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/85 dark:bg-champion-900/70 backdrop-blur-sm grid place-items-center text-champion-500 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-champion-900 hover:scale-110" aria-label="Ajouter aux favoris">
+    <button type="button" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/85 dark:bg-nuit-900/70 backdrop-blur-sm grid place-items-center text-champion-500 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-nuit-900 hover:scale-110" aria-label="Ajouter aux favoris">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.5s-7.5-4.6-10-9.2C.5 8 2 4.5 5.5 4.5c2 0 3.5 1 6.5 4 3-3 4.5-4 6.5-4C22 4.5 23.5 8 22 11.3c-2.5 4.6-10 9.2-10 9.2Z"/>
       </svg>
@@ -45,8 +45,8 @@
 
     <!-- Rupture de stock -->
     {% if not produit.est_disponible %}
-    <div class="absolute inset-0 grid place-items-center bg-champion-900/25">
-      <span class="px-3 py-1.5 rounded-full bg-champion-900/85 text-creme-50 text-[11px] font-semibold tracking-wide" data-fr="Rupture de stock" data-en="Out of stock">Rupture de stock</span>
+    <div class="absolute inset-0 grid place-items-center bg-nuit-900/40">
+      <span class="px-3 py-1.5 rounded-full bg-nuit-900/85 text-creme-50 text-[11px] font-semibold tracking-wide" data-fr="Rupture de stock" data-en="Out of stock">Rupture de stock</span>
     </div>
     {% endif %}
   </a>
@@ -56,44 +56,47 @@
 
     <div class="flex items-center justify-between gap-2 mb-1">
       {% if produit.marque %}
-      <span class="text-[10.5px] uppercase tracking-wide text-champion-400 dark:text-champion-300/60 font-medium">{{ produit.marque.nom }}</span>
+      <span class="text-[10.5px] uppercase tracking-wide text-champion-400 dark:text-nuit-300 font-medium"
+            data-fr="{{ produit.marque.nom_fr }}" data-en="{{ produit.marque.nom_en }}">{{ produit.marque.nom }}</span>
       {% else %}
       <span></span>
       {% endif %}
       {% if produit.est_disponible %}
-      <span class="flex items-center gap-1 text-[10.5px] text-champion-400 dark:text-champion-300/60">
+      <span class="flex items-center gap-1 text-[10.5px] text-champion-400 dark:text-nuit-300">
         <span class="w-1.5 h-1.5 rounded-full bg-champion-400"></span>
         <span data-fr="En stock" data-en="In stock">En stock</span>
       </span>
       {% endif %}
     </div>
 
-    <a href="{% url 'supermarche:produit_detail' produit.slug%}" class="font-display font-700 text-[15px] leading-snug mb-1 line-clamp-2 text-champion-900 dark:text-creme-50 hover:text-champion-500 dark:hover:text-mangue-500 transition-colors">
-      {{ produit.nom }}
+    <a href="{% url 'supermarche:produit_detail' produit.slug%}"
+       class="font-display font-700 text-[15px] leading-snug mb-1 line-clamp-2 text-champion-900 dark:text-white hover:text-champion-500 dark:hover:text-mangue-500 transition-colors"
+       data-fr="{{ produit.nom_fr }}" data-en="{{ produit.nom_en }}">
+      {{ produit.nom_fr }}
     </a>
 
-    {% comment %} {% if produit.description %}
-    <p class="text-[12px] text-champion-500/80 dark:text-creme-100/50 leading-relaxed line-clamp-2 mb-2">{{ produit.description }}</p>
+    {% comment %} {% if produit.description_fr %}
+    <p class="text-[12px] text-champion-500/80 dark:text-white/50 leading-relaxed line-clamp-2 mb-2" data-fr="{{ produit.description_fr }}" data-en="{{ produit.description_en }}">{{ produit.description_fr }}</p>
     {% endif %} {% endcomment %}
 
     {% if produit.contenance or produit.unite_de_vente %}
-    <span class="inline-block w-fit text-[11px] text-champion-400 dark:text-champion-300/60 bg-champion-50 dark:bg-champion-900/50 rounded-full px-2 py-0.5 mb-2.5">
+    <span class="inline-block w-fit text-[11px] text-champion-400 dark:text-nuit-300 bg-champion-50 dark:bg-nuit-900/50 rounded-full px-2 py-0.5 mb-2.5">
       {{ produit.contenance|default:produit.get_unite_de_vente_display }}
     </span>
     {% endif %}
 
-    <div class="mt-auto flex items-end justify-between pt-1.5 border-t border-champion-50 dark:border-champion-700/40">
+    <div class="mt-auto flex items-end justify-between pt-1.5 border-t border-champion-50 dark:border-nuit-700">
       <div class="pt-3">
         {% if produit.est_en_promo and produit.prix_promo %}
         <div class="flex items-baseline gap-1.5">
           <span class="font-display font-800 text-lg text-hibiscus-500">{{ produit.prix_affiche }}</span>
-          <span class="text-[11px] text-champion-400 dark:text-champion-300/60">FCFA</span>
+          <span class="text-[11px] text-champion-400 dark:text-nuit-300">FCFA</span>
         </div>
-        <span class="block text-[11px] text-champion-300 dark:text-champion-400/60 line-through">{{ produit.prix_public }} FCFA</span>
+        <span class="block text-[11px] text-champion-300 dark:text-nuit-400 line-through">{{ produit.prix_public }} FCFA</span>
         {% else %}
         <div class="flex items-baseline gap-1.5">
           <span class="font-display font-800 text-lg text-champion-600 dark:text-mangue-500">{{ produit.prix_public }}</span>
-          <span class="text-[11px] text-champion-400 dark:text-champion-300/60">FCFA</span>
+          <span class="text-[11px] text-champion-400 dark:text-nuit-300">FCFA</span>
         </div>
         {% endif %}
       </div>
@@ -102,7 +105,7 @@
         {% csrf_token %}
         <input type="hidden" name="quantite" value="1">
         <button type="submit"
-          class="w-9 h-9 rounded-full bg-champion-50 dark:bg-champion-700/60 text-champion-600 dark:text-creme-50 grid place-items-center transition-all duration-300 hover:bg-champion-500 hover:text-creme-50 hover:rotate-90 hover:shadow-[0_6px_16px_-4px_rgba(31,107,74,0.5)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0"
+          class="w-9 h-9 rounded-full bg-champion-50 dark:bg-nuit-700 text-champion-600 dark:text-white grid place-items-center transition-all duration-300 hover:bg-champion-500 hover:text-creme-50 hover:rotate-90 hover:shadow-[0_6px_16px_-4px_rgba(31,107,74,0.5)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0"
           aria-label="Ajouter au panier"
           {% if not produit.est_disponible %}disabled{% endif %}>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">

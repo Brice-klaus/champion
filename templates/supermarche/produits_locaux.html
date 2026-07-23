@@ -38,7 +38,7 @@
   <div class="flex items-center justify-center gap-2 mt-14 reveal">
 
     {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page précédente">
+    <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" data-fr="Page précédente" data-en="Previous page" aria-label="Page précédente">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
     </a>
     {% else %}
@@ -60,7 +60,7 @@
     {% endfor %}
 
     {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Page suivante">
+    <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 grid place-items-center rounded-xl2 bg-white dark:bg-champion-800 border border-champion-200 dark:border-champion-600 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" data-fr="Page suivante" data-en="Next page" aria-label="Page suivante">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
     </a>
     {% else %}

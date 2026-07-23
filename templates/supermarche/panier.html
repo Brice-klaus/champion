@@ -22,7 +22,9 @@
       </div>
 
       <div class="flex-1 min-w-0">
-        <a href="{{ item.produit.get_absolute_url }}" class="font-display font-700 text-sm hover:text-champion-500 transition-colors line-clamp-1">
+        <a href="{{ item.produit.get_absolute_url }}"
+           class="font-display font-700 text-sm hover:text-champion-500 transition-colors line-clamp-1"
+           data-fr="{{ item.produit.nom_fr }}" data-en="{{ item.produit.nom_en }}">
           {{ item.produit.nom }}
         </a>
         <p class="text-xs text-champion-400 mt-0.5">

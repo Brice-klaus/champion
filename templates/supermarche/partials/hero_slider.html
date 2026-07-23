@@ -4,7 +4,7 @@
   texte_bouton, lien_bouton, couleur_texte.
 {% endcomment %}
 
-<section class="relative overflow-hidden bg-champion-500 dark:bg-champion-800">
+<section class="relative overflow-hidden bg-champion-500 dark:bg-nuit-800">
 
   <!-- Formes organiques flottantes (motif signature) -->
   <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-mangue-500/20 blur-2xl animate-floaty"></div>
@@ -19,24 +19,30 @@
 
         <!-- Texte -->
         <div class="order-2 lg:order-1" style="color: {{ slide.couleur_texte|default:'#FFFFFF' }};">
-          <h5 class="font-display font-800 text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-5 animate-fadeUp" style="animation-delay:.1s">
-            {{ slide.titre }}
+          <h5 class="font-display font-800 text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-5 animate-fadeUp"
+              style="animation-delay:.1s"
+              data-fr="{{ slide.titre_fr }}" data-en="{{ slide.titre_en }}">
+            {{ slide.titre_fr }}
           </h5>
-          {% if slide.sous_titre %}
-          <p class="text-base md:text-lg max-w-md mb-8 opacity-90 animate-fadeUp" style="animation-delay:.2s">
-            {{ slide.sous_titre }}
+          {% if slide.sous_titre_fr %}
+          <p class="text-base md:text-lg max-w-md mb-8 opacity-90 animate-fadeUp"
+             style="animation-delay:.2s"
+             data-fr="{{ slide.sous_titre_fr }}" data-en="{{ slide.sous_titre_en }}">
+            {{ slide.sous_titre_fr }}
           </p>
           {% endif %}
           <div class="flex flex-wrap gap-3 animate-fadeUp" style="animation-delay:.3s">
-            {% if slide.texte_bouton %}
+            {% if slide.texte_bouton_fr %}
             <a href="{{ slide.lien_bouton|default:'#' }}"
-               class="px-6 py-3.5 rounded-xl2 bg-mangue-500 hover:bg-mangue-600 text-champion-900 font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-soft">
-              {{ slide.texte_bouton }}
+               class="px-6 py-3.5 rounded-xl2 bg-mangue-500 hover:bg-mangue-600 text-champion-900 font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-soft"
+               data-fr="{{ slide.texte_bouton_fr }}" data-en="{{ slide.texte_bouton_en }}">
+              {{ slide.texte_bouton_fr }}
             </a>
             {% endif %}
             <a href="#promotions"
                class="px-6 py-3.5 rounded-xl2 border font-semibold text-sm transition-all duration-300 hover:bg-white/10"
-               style="border-color: color-mix(in srgb, {{ slide.couleur_texte|default:'#FFFFFF' }} 40%, transparent);">
+               style="border-color: color-mix(in srgb, {{ slide.couleur_texte|default:'#FFFFFF' }} 40%, transparent);"
+               data-fr="Voir les promos" data-en="See deals">
               Voir les promos
             </a>
           </div>
@@ -50,7 +56,7 @@
               {% if slide.image_mobile %}
               <source media="(max-width: 767px)" srcset="{{ slide.image_mobile.url }}">
               {% endif %}
-              <img src="{{ slide.image_desktop.url }}" alt="{{ slide.titre }}" class="w-full h-full object-cover">
+              <img src="{{ slide.image_desktop.url }}" alt="{{ slide.titre_fr }}" class="w-full h-full object-cover">
             </picture>
             {% else %}
             <div class="w-full h-full bg-champion-300/40 grid place-items-center text-champion-50/70 text-sm">
@@ -58,23 +64,20 @@
             </div>
             {% endif %}
           </div>
-          {% comment %} <div class="absolute -bottom-5 -left-5 w-24 h-24 rounded-full bg-mangue-500 grid place-items-center font-display font-800 text-champion-900 text-center text-xs leading-tight rotate-[-8deg] shadow-soft animate-floaty">
-            Fraîcheur<br>du jour
-          </div> {% endcomment %}
         </div>
 
       </div>
     </div>
     {% empty %}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center text-creme-50">
-      <h1 class="font-display font-800 text-4xl">Le Champion Supermarché Togo</h1>
-      <p class="mt-3 text-champion-50/80">Vos courses, en toute simplicité.</p>
+      <h1 class="font-display font-800 text-4xl" data-fr="Le Champion Supermarché Togo" data-en="Le Champion Supermarché Togo">Le Champion Supermarché Togo</h1>
+      <p class="mt-3 text-champion-50/80" data-fr="Vos courses, en toute simplicité." data-en="Your shopping, made simple.">Vos courses, en toute simplicité.</p>
     </div>
     {% endfor %}
   </div>
 
   <!-- Vague festonnée (motif "auvent de marché") -->
-  <div class="scallop-bottom h-6 bg-creme-50 dark:bg-champion-900 relative -mb-px"></div>
+  <div class="scallop-bottom h-6 bg-creme-50 dark:bg-nuit-900 relative -mb-px"></div>
 
   {% if hero_slides|length > 1 %}
   <!-- Pagination -->

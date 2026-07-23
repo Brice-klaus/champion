@@ -10,42 +10,44 @@
   </a>
 
   <!-- ---------- RAYONS (méga-menu) ---------- -->
-  <div class="relative group">
-    <button type="button"
-      class="flex items-center gap-1.5 px-3 -mx-3 py-2 rounded-full transition-colors hover:bg-champion-50 dark:hover:bg-nuit-800 group-hover:bg-champion-50 dark:group-hover:bg-nuit-800 hover:text-champion-500 group-hover:text-champion-500 {% if nav_rayons_actif %}bg-champion-50 dark:bg-nuit-800 text-champion-500 font-semibold{% endif %}"
-      data-fr="Rayons" data-en="Aisles">
-      Rayons
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 {% if nav_rayons_actif %}text-champion-500{% else %}text-champion-400 group-hover:text-champion-500{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
-    </button>
+<!-- ---------- RAYONS (méga-menu) ---------- -->
+<div class="relative group">
+  <button type="button"
+    class="flex items-center gap-1.5 px-3 -mx-3 py-2 rounded-full transition-colors hover:bg-champion-50 dark:hover:bg-nuit-800 group-hover:bg-champion-50 dark:group-hover:bg-nuit-800 hover:text-champion-500 group-hover:text-champion-500 {% if nav_rayons_actif %}bg-champion-50 dark:bg-nuit-800 text-champion-500 font-semibold{% endif %}"
+    data-fr="Rayons" data-en="Aisles">
+    Rayons
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 {% if nav_rayons_actif %}text-champion-500{% else %}text-champion-400 group-hover:text-champion-500{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+  </button>
 
-    <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[560px] z-50">
-      <span class="absolute left-1/2 -translate-x-1/2 top-1.5 w-3 h-3 rotate-45 bg-white dark:bg-nuit-800 border-l border-t border-champion-100 dark:border-nuit-600/50"></span>
+  <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[560px] z-50">
+    <span class="absolute left-1/2 -translate-x-1/2 top-1.5 w-3 h-3 rotate-45 bg-white dark:bg-nuit-800 border-l border-t border-champion-100 dark:border-nuit-600/50"></span>
 
-      <div class="relative rounded-xl3 bg-white dark:bg-nuit-800 shadow-soft dark:shadow-softdark border border-champion-100 dark:border-nuit-600/50 p-6 grid grid-cols-2 gap-x-8 gap-y-5">
-        {% for cat in categories_nav %}
-        <div>
-          <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}"
-            class="flex items-center gap-1.5 font-display font-700 text-sm text-champion-700 dark:text-white hover:text-champion-500 transition-colors">
-            {% if cat.icone %}<span class="text-base">{{ cat.icone }}</span>{% endif %}
-            {{ cat.nom }}
-          </a>
-          {% if cat.sous_categories.all %}
-          <ul class="mt-2 ml-3 space-y-1.5 border-l border-champion-100 dark:border-nuit-600/50 pl-3">
-            {% for sc in cat.sous_categories.all|slice:":4" %}
-            <li>
-              <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}?sous_categorie={{ sc.slug }}"
-                class="text-xs text-black dark:text-white/80 hover:text-champion-600 dark:hover:text-white transition-colors">
-                {{ sc.nom }}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-          {% endif %}
-        </div>
-        {% endfor %}
+    <div class="relative rounded-xl3 bg-white dark:bg-nuit-800 shadow-soft dark:shadow-softdark border border-champion-100 dark:border-nuit-600/50 p-6 grid grid-cols-2 gap-x-8 gap-y-5">
+      {% for cat in categories_nav %}
+      <div>
+        <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}"
+          class="flex items-center gap-1.5 font-display font-700 text-sm text-champion-700 dark:text-white hover:text-champion-500 transition-colors">
+          {% if cat.icone %}<span class="text-base">{{ cat.icone }}</span>{% endif %}
+          <span data-fr="{{ cat.nom_fr }}" data-en="{{ cat.nom_en }}">{{ cat.nom_fr }}</span>
+        </a>
+        {% if cat.sous_categories.all %}
+        <ul class="mt-2 ml-3 space-y-1.5 border-l border-champion-100 dark:border-nuit-600/50 pl-3">
+          {% for sc in cat.sous_categories.all|slice:":4" %}
+          <li>
+            <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}?sous_categorie={{ sc.slug }}"
+              class="text-xs text-black dark:text-white/80 hover:text-champion-600 dark:hover:text-white transition-colors"
+              data-fr="{{ sc.nom_fr }}" data-en="{{ sc.nom_en }}">
+              {{ sc.nom_fr }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
       </div>
+      {% endfor %}
     </div>
   </div>
+</div>
 
   <!-- ---------- PRODUITS (dropdown simple) ---------- -->
   <div class="relative group">

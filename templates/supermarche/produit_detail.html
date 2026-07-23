@@ -10,7 +10,7 @@
 <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 text-xs text-champion-400 dark:text-champion-300/60">
   {% for crumb in breadcrumb %}
     {% if crumb.url %}
-      <a href="" class="hover:text-champion-600 dark:hover:text-creme-100 transition-colors">{{ crumb.label }}</a>
+      <a href="{{ crumb.url }}" class="hover:text-champion-600 dark:hover:text-creme-100 transition-colors">{{ crumb.label }}</a>
     {% else %}
       <span class="{% if forloop.last %}text-champion-700 dark:text-creme-100 font-medium{% endif %}">{{ crumb.label }}</span>
     {% endif %}
@@ -21,10 +21,10 @@
 
 <!-- ══════════ FICHE PRODUIT ══════════ -->
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-  <div class="grid lg:grid-cols-2 gap-10 lg:gap-14">
+  <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
 
     <!-- ---------- Galerie ---------- -->
-    <div class="reveal">
+    <div class="reveal lg:sticky lg:top-24">
       <div class="relative rounded-xl3 overflow-hidden bg-white dark:bg-champion-800 aspect-square">
         {% if produit.image_principale %}
         <img id="galerie-image-principale" src="{{ produit.image_principale.url }}" alt="{{ produit.nom }}" class="w-full h-full object-contain p-6">
@@ -35,16 +35,16 @@
         <!-- Badges -->
         <div class="absolute top-4 left-4 flex flex-col gap-2">
           {% if produit.est_en_promo and produit.pourcentage_reduction %}
-          <span class="px-2.5 py-1 rounded-full bg-hibiscus-500 text-creme-50 text-xs font-bold">−{{ produit.pourcentage_reduction }}%</span>
+          <span class="px-2.5 py-1 rounded-full bg-hibiscus-500 text-creme-50 text-xs font-bold shadow-sm">−{{ produit.pourcentage_reduction }}%</span>
           {% endif %}
           {% if produit.est_nouveau %}
-          <span class="px-2.5 py-1 rounded-full bg-champion-500 text-creme-50 text-xs font-bold" data-fr="Nouveau" data-en="New">Nouveau</span>
+          <span class="px-2.5 py-1 rounded-full bg-champion-500 text-creme-50 text-xs font-bold shadow-sm" data-fr="Nouveau" data-en="New">Nouveau</span>
           {% endif %}
           {% if produit.est_bio %}
-          <span class="px-2.5 py-1 rounded-full bg-champion-100 text-champion-700 text-xs font-bold" data-fr="Bio" data-en="Organic">Bio</span>
+          <span class="px-2.5 py-1 rounded-full bg-champion-100 text-champion-700 text-xs font-bold shadow-sm" data-fr="Bio" data-en="Organic">Bio</span>
           {% endif %}
           {% if produit.est_local %}
-          <span class="px-2.5 py-1 rounded-full bg-mangue-100 text-mangue-700 text-xs font-bold" data-fr="Local" data-en="Local">Local</span>
+          <span class="px-2.5 py-1 rounded-full bg-mangue-100 text-mangue-700 text-xs font-bold shadow-sm" data-fr="Local" data-en="Local">Local</span>
           {% endif %}
         </div>
 
@@ -73,23 +73,27 @@
 
     <!-- ---------- Informations ---------- -->
     <div class="reveal" style="transition-delay: 100ms">
+
       {% if produit.marque %}
-      <span class="text-xs font-semibold uppercase tracking-widest text-champion-500">{{ produit.marque.nom }}</span>
+      <span class="text-xs font-semibold uppercase tracking-widest text-champion-500"
+            data-fr="{{ produit.marque.nom_fr }}" data-en="{{ produit.marque.nom_en }}">{{ produit.marque.nom }}</span>
       {% endif %}
-      <h1 class="font-display font-800 text-2xl md:text-3xl mt-1 mb-3">{{ produit.nom }}</h1>
+
+      <h1 class="font-display font-800 text-2xl md:text-3xl mt-1 mb-2 leading-tight"
+          data-fr="{{ produit.nom_fr }}" data-en="{{ produit.nom_en }}">{{ produit.nom }}</h1>
 
       {% if produit.reference %}
       <span class="text-xs text-champion-400" data-fr="Réf. {{ produit.reference }}" data-en="Ref. {{ produit.reference }}">Réf. {{ produit.reference }}</span>
       {% endif %}
 
       <!-- Prix -->
-      <div class="flex items-end gap-3 mt-6 mb-2">
-        <span class="font-display font-800 text-3xl text-champion-600 dark:text-mangue-500">{{ produit.prix_affiche }} FCFA</span>
+      <div class="flex flex-wrap items-end gap-3 mt-6">
+        <span class="font-display font-800 text-3xl text-champion-600 dark:text-mangue-500 leading-none">{{ produit.prix_affiche }} FCFA</span>
         {% if produit.est_en_promo and produit.prix_promo %}
-        <span class="text-base text-champion-400 line-through mb-1">{{ produit.prix_public }} FCFA</span>
+        <span class="text-base text-champion-400 line-through leading-none">{{ produit.prix_public }} FCFA</span>
         {% endif %}
       </div>
-      <span class="text-xs text-champion-500" data-fr="Prix au {{ produit.get_unite_de_vente_display }}" data-en="Price per {{ produit.get_unite_de_vente_display }}">
+      <span class="block mt-1.5 text-xs text-champion-500" data-fr="Prix au {{ produit.get_unite_de_vente_display }}" data-en="Price per {{ produit.get_unite_de_vente_display }}">
         Prix au {{ produit.get_unite_de_vente_display }}{% if produit.contenance %} — {{ produit.contenance }}{% endif %}
       </span>
 
@@ -99,45 +103,46 @@
         {% for promo in promotions_produit %}
         <a href="{{ promo.get_absolute_url|default:'' }}" class="flex items-center gap-3 p-3 rounded-xl2 bg-hibiscus-50 dark:bg-hibiscus-500/10 hover:bg-hibiscus-100 dark:hover:bg-hibiscus-500/20 transition-colors">
           <span class="px-2 py-1 rounded-full bg-hibiscus-500 text-creme-50 text-[10px] font-bold flex-none">PROMO</span>
-          <span class="text-sm font-medium text-champion-700 dark:text-creme-100 line-clamp-1">{{ promo.titre }}</span>
+          <span class="text-sm font-medium text-champion-700 dark:text-creme-100 line-clamp-1 flex-1 min-w-0">{{ promo.titre }}</span>
           {% if promo.date_fin %}
-          <span class="ml-auto text-[11px] text-champion-400 flex-none" data-fr="Jusqu'au {{ promo.date_fin|date:'d M' }}" data-en="Until {{ promo.date_fin|date:'M d' }}">Jusqu'au {{ promo.date_fin|date:"d M" }}</span>
+          <span class="text-[11px] text-champion-400 flex-none" data-fr="Jusqu'au {{ promo.date_fin|date:'d M' }}" data-en="Until {{ promo.date_fin|date:'M d' }}">Jusqu'au {{ promo.date_fin|date:"d M" }}</span>
           {% endif %}
         </a>
         {% endfor %}
       </div>
       {% endif %}
 
-     <!-- Sélecteur de quantité + ajout panier -->
-<form method="post" action="{% url 'supermarche:panier_ajouter' produit.pk %}" class="flex items-center gap-3 mt-7">
-  {% csrf_token %}
+      <!-- Sélecteur de quantité + ajout panier -->
+      <form method="post" action="{% url 'supermarche:panier_ajouter' produit.pk %}" class="flex flex-wrap items-center gap-3 mt-7">
+        {% csrf_token %}
 
-  <div class="flex items-center border border-champion-200 dark:border-champion-600 rounded-xl2 overflow-hidden">
-    <button type="button" id="qte-moins" class="w-10 h-11 grid place-items-center text-champion-500 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Diminuer la quantité">−</button>
-    <input id="qte-valeur" type="text" name="quantite" value="1" readonly class="w-10 text-center text-sm font-semibold bg-transparent">
-    <button type="button" id="qte-plus" class="w-10 h-11 grid place-items-center text-champion-500 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Augmenter la quantité">+</button>
-  </div>
+        <div class="flex items-center border border-champion-200 dark:border-champion-600 rounded-xl2 overflow-hidden flex-none">
+          <button type="button" id="qte-moins" class="w-10 h-11 grid place-items-center text-champion-500 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Diminuer la quantité">−</button>
+          <input id="qte-valeur" type="text" name="quantite" value="1" readonly class="w-10 text-center text-sm font-semibold bg-transparent">
+          <button type="button" id="qte-plus" class="w-10 h-11 grid place-items-center text-champion-500 hover:bg-champion-50 dark:hover:bg-champion-700 transition-colors" aria-label="Augmenter la quantité">+</button>
+        </div>
 
-  <button type="submit" {% if not produit.est_disponible %}disabled{% endif %} class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl2 bg-champion-500 hover:bg-champion-600 disabled:bg-champion-200 disabled:cursor-not-allowed text-creme-50 font-semibold text-sm transition-all duration-300">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.994-4.706 2.602-7.202.232-.955-.42-1.898-1.402-1.898H5.106M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
-    <span data-fr="{% if produit.est_disponible %}Ajouter au panier{% else %}Indisponible{% endif %}" data-en="{% if produit.est_disponible %}Add to cart{% else %}Unavailable{% endif %}">{% if produit.est_disponible %}Ajouter au panier{% else %}Indisponible{% endif %}</span>
-  </button>
-</form>
+        <button type="submit" {% if not produit.est_disponible %}disabled{% endif %} class="flex-1 min-w-[10rem] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl2 bg-champion-500 hover:bg-champion-600 disabled:bg-champion-200 disabled:cursor-not-allowed text-creme-50 font-semibold text-sm transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.994-4.706 2.602-7.202.232-.955-.42-1.898-1.402-1.898H5.106M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
+          <span data-fr="{% if produit.est_disponible %}Ajouter au panier{% else %}Indisponible{% endif %}" data-en="{% if produit.est_disponible %}Add to cart{% else %}Unavailable{% endif %}">{% if produit.est_disponible %}Ajouter au panier{% else %}Indisponible{% endif %}</span>
+        </button>
+      </form>
+
       <!-- Description -->
-     <!-- Description -->
       {% if produit.description %}
-      <div class="mt-8 pt-8 border-t border-champion-100 dark:border-champion-700/40">
+      <div class="mt-8 pt-6 border-t border-champion-100 dark:border-champion-700/40">
         <h2 class="font-display font-700 text-base mb-2" data-fr="Description" data-en="Description">Description</h2>
-        <p class="text-sm text-corps-produit leading-relaxed whitespace-pre-line">{{ produit.description }}</p>
+        <p class="text-sm text-corps-produit leading-relaxed whitespace-pre-line"
+           data-fr="{{ produit.description_fr }}" data-en="{{ produit.description_en }}">{{ produit.description }}</p>
       </div>
       {% endif %}
 
       <!-- Composition -->
-      <!-- Composition -->
       {% if produit.composition %}
       <div class="mt-6 pt-6 border-t border-champion-100 dark:border-champion-700/40">
         <h2 class="font-display font-700 text-base mb-2" data-fr="Composition" data-en="Composition">Composition</h2>
-        <p class="text-sm text-corps-produit leading-relaxed whitespace-pre-line">{{ produit.composition }}</p>
+        <p class="text-sm text-corps-produit leading-relaxed whitespace-pre-line"
+           data-fr="{{ produit.composition_fr }}" data-en="{{ produit.composition_en }}">{{ produit.composition }}</p>
       </div>
       {% endif %}
 
@@ -145,9 +150,11 @@
       {% if produit.conditionnement %}
       <div class="mt-6 pt-6 border-t border-champion-100 dark:border-champion-700/40">
         <h2 class="font-display font-700 text-base mb-2" data-fr="Conditionnement" data-en="Packaging">Conditionnement</h2>
-        <p class="text-sm text-champion-600 dark:text-creme-100/70">{{ produit.conditionnement }}</p>
+        <p class="text-sm text-champion-600 dark:text-creme-100/70"
+           data-fr="{{ produit.conditionnement_fr }}" data-en="{{ produit.conditionnement_en }}">{{ produit.conditionnement }}</p>
       </div>
       {% endif %}
+
     </div>
 
   </div>

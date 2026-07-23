@@ -74,6 +74,8 @@ MAGASIN_WHATSAPP = "22893040702"
 
 # ✅ DJANGO_APPS — uniquement les apps Django natives
 DJANGO_APPS = [
+    "import_export",
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -87,6 +89,9 @@ THIRD_PARTY_APPS = [
     "django_extensions",
     "django_cleanup",
 ]
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = "fr"
+MODELTRANSLATION_LANGUAGES = ("fr", "en")
 
 # ✅ LOCAL_APPS — uniquement tes applications
 LOCAL_APPS = [

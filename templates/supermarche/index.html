@@ -8,8 +8,6 @@
 {% include "supermarche/partials/hero_slider.html" %}
 
 
-
-
 <!-- ══════════ PRODUITS LOCAUX ══════════ -->
 {% if produits_locaux %}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
@@ -17,7 +15,7 @@
     <div class="lg:col-span-1 reveal">
       <span class="text-xs font-semibold uppercase tracking-widest text-champion-500" data-fr="Fait au Togo" data-en="Made in Togo">Fait au Togo</span>
       <h2 class="font-display font-800 text-2xl md:text-3xl mt-1 mb-4" data-fr="Le meilleur du terroir togolais" data-en="The best of Togolese terroir">Le meilleur du terroir togolais</h2>
-      <p class="text-champion-600 dark:text-creme-100/70 text-sm leading-relaxed mb-6" data-fr="Nous soutenons les producteurs locaux en mettant en avant leurs produits, frais et authentiques." data-en="We support local producers by showcasing their fresh, authentic products.">
+      <p class="text-champion-600 dark:text-white/70 text-sm leading-relaxed mb-6" data-fr="Nous soutenons les producteurs locaux en mettant en avant leurs produits, frais et authentiques." data-en="We support local producers by showcasing their fresh, authentic products.">
         Nous soutenons les producteurs locaux en mettant en avant leurs produits, frais et authentiques.
       </p>
       <a href="#" class="inline-flex items-center gap-1 font-semibold text-sm text-champion-500 hover:gap-2 transition-all" data-fr="Découvrir la sélection" data-en="Discover the selection">Découvrir la sélection →</a>
@@ -40,37 +38,30 @@
       <span class="text-xs font-semibold uppercase tracking-widest text-mangue-600 dark:text-mangue-500" data-fr="Nos rayons" data-en="Our aisles">Nos rayons</span>
       <h2 class="font-display font-800 text-2xl md:text-3xl mt-1" data-fr="Faites vos courses par rayon" data-en="Shop by aisle">Faites vos courses par rayon</h2>
     </div>
-    <a href="{% url 'supermarche:raiyoncategorie'%}" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Tout voir" data-en="See all">Tout voir →</a>
+    <a href="{% url 'supermarche:produits_tous' %}" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Tout voir" data-en="See all">Tout voir →</a>
   </div>
 
   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7">
     {% for cat in categories_vedette %}
     <a href="{% url 'supermarche:rayoncategorie_detail' cat.slug %}"
-       {% if cat.description %}title="{{ cat.description }}"{% endif %}
-       class="reveal group flex flex-col items-center text-center gap-3 p-4 rounded-xl2 hover:bg-champion-50 dark:hover:bg-champion-800 transition-colors duration-300"
+       {% if cat.description_fr %}title="{{ cat.description_fr }}"{% endif %}
+       class="reveal group flex flex-col items-center text-center gap-3 p-4 rounded-xl2 hover:bg-champion-50 dark:hover:bg-nuit-800 transition-colors duration-300"
        style="transition-delay: {{ forloop.counter0|add:0 }}0ms">
-      <div class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-champion-100 dark:bg-champion-700/60 grid place-items-center overflow-hidden group-hover:scale-105 group-hover:bg-mangue-100 dark:group-hover:bg-mangue-500/20 transition-all duration-300">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-champion-100 dark:bg-nuit-700 grid place-items-center overflow-hidden group-hover:scale-105 group-hover:bg-mangue-100 dark:group-hover:bg-mangue-500/20 transition-all duration-300">
         {% if cat.image %}
-        <img src="{{ cat.image.url }}" alt="{{ cat.nom }}" class="w-full h-full object-cover">
+        <img src="{{ cat.image.url }}" alt="{{ cat.nom_fr }}" class="w-full h-full object-cover">
         {% elif cat.icone %}
         <span class="text-4xl md:text-5xl leading-none" aria-hidden="true">{{ cat.icone }}</span>
         {% else %}
-        <span class="font-display font-800 text-3xl text-champion-500">{{ cat.nom|slice:":1" }}</span>
+        <span class="font-display font-800 text-3xl text-champion-500">{{ cat.nom_fr|slice:":1" }}</span>
         {% endif %}
       </div>
-      <span class="text-sm md:text-base font-medium leading-tight">{{ cat.nom }}</span>
-      {% comment %} {% if cat.description %}
-      <span class="hidden md:block text-xs text-champion-400 dark:text-champion-300/60 leading-snug line-clamp-1 max-w-[140px]">
-        {{ cat.description|truncatechars:28 }}
-      </span>
-      {% endif %} {% endcomment %}
-
+      <span class="text-sm md:text-base font-medium leading-tight" data-fr="{{ cat.nom_fr }}" data-en="{{ cat.nom_en }}">{{ cat.nom_fr }}</span>
     </a>
     {% endfor %}
   </div>
 </section>
 
-<!-- ══════════ BANNIÈRES MILIEU ══════════ -->
 <!-- ══════════ BANNIÈRES MILIEU ══════════ -->
 {% if bannieres_milieu %}
 <section class="max-w-7xl mx-auto px-2 sm:px-2 lg:px-8 pb-4">
@@ -78,10 +69,10 @@
     {% for banniere in bannieres_milieu %}
     <a href="{{ banniere.lien|default:'#' }}" class="reveal relative rounded-xl3 overflow-hidden bg-champion-50 dark:bg-nuit-800 group block">
       {% if banniere.image %}
-      <img src="{{ banniere.image.url }}" alt="{{ banniere.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+      <img src="{{ banniere.image.url }}" alt="{{ banniere.titre_fr }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]">
       {% else %}
       <div class="w-full aspect-[16/7] bg-champion-200 dark:bg-nuit-700 flex items-end p-5">
-        <span class="text-creme-50 font-display font-700">{{ banniere.titre }}</span>
+        <span class="text-creme-50 font-display font-700" data-fr="{{ banniere.titre_fr }}" data-en="{{ banniere.titre_en }}">{{ banniere.titre_fr }}</span>
       </div>
       {% endif %}
     </a>
@@ -89,16 +80,17 @@
   </div>
 </section>
 {% endif %}
+
 <!-- ══════════ NOUVEAUTÉS ══════════ -->
 {% if nouveautes %}
-<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-champion-800/30">
+<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-nuit-800/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-end justify-between mb-8 reveal">
       <div>
         <span class="text-xs font-semibold uppercase tracking-widest text-mangue-600 dark:text-mangue-500" data-fr="Fraîchement arrivé" data-en="Freshly arrived">Fraîchement arrivé</span>
         <h2 class="font-display font-800 text-2xl md:text-3xl mt-1" data-fr="Nos nouveautés" data-en="New arrivals">Nos nouveautés</h2>
       </div>
-      <a href="#" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Tout voir" data-en="See all">Tout voir →</a>
+      <a href="{% url 'supermarche:produits_nouveautes' %}" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Tout voir" data-en="See all">Tout voir →</a>
     </div>
     <div class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
       {% for produit in nouveautes %}
@@ -123,16 +115,14 @@
     <div class="reveal relative rounded-xl3 overflow-hidden text-creme-50 flex flex-col justify-between min-h-[280px] {% if not promo.image_banniere %}bg-champion-500{% endif %}" style="transition-delay: {{ forloop.counter0 }}00ms">
 
       {% if promo.image_banniere %}
-      <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre }}" class="absolute inset-0 w-full h-full object-cover">
-      <!-- Voile uniforme pour garantir un contraste minimum partout -->
-      <div class="absolute inset-0 bg-champion-900/55"></div>
-      <!-- Dégradé additionnel, plus prononcé en bas pour le CTA -->
-      <div class="absolute inset-0 bg-gradient-to-t from-champion-900/95 via-champion-900/55 to-champion-900/25"></div>
+      <img src="{{ promo.image_banniere.url }}" alt="{{ promo.titre_fr }}" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-nuit-900/55"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-nuit-900/95 via-nuit-900/55 to-nuit-900/25"></div>
       {% else %}
       <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-mangue-500/25"></div>
       {% endif %}
 
-      <div class="relative p-7 flex flex-col flex-1 justify-between [text-shadow:0_1px_6px_rgba(14,26,21,0.35)]">
+      <div class="relative p-7 flex flex-col flex-1 justify-between [text-shadow:0_1px_6px_rgba(10,15,28,0.4)]">
         <div>
           <div class="flex items-center gap-2 mb-4">
             <span class="inline-block px-2.5 py-1 rounded-full bg-mangue-500 text-champion-900 text-[11px] font-bold [text-shadow:none]">PROMO</span>
@@ -142,9 +132,9 @@
             </span>
             {% endif %}
           </div>
-          <h3 class="font-display font-700 text-xl leading-snug text-creme-50">{{ promo.titre }}</h3>
-          {% if promo.description %}
-          <p class="text-creme-50/95 text-sm mt-2 line-clamp-2">{{ promo.description }}</p>
+          <h3 class="font-display font-700 text-xl leading-snug text-creme-50" data-fr="{{ promo.titre_fr }}" data-en="{{ promo.titre_en }}">{{ promo.titre_fr }}</h3>
+          {% if promo.description_fr %}
+          <p class="text-creme-50/95 text-sm mt-2 line-clamp-2" data-fr="{{ promo.description_fr }}" data-en="{{ promo.description_en }}">{{ promo.description_fr }}</p>
           {% endif %}
 
           <div class="flex flex-wrap gap-x-4 gap-y-1.5 mt-4 text-[11px] font-medium text-creme-50/90">
@@ -175,7 +165,7 @@
 
 <!-- ══════════ COUPS DE CŒUR / PROMO PRODUITS ══════════ -->
 {% if coups_de_coeur or produits_promo %}
-<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-champion-800/30">
+<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-nuit-800/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     {% if coups_de_coeur %}
@@ -214,16 +204,13 @@
 </section>
 {% endif %}
 
-
-
-
-<!-- ══════════ CATALOGUE NUMÉRIQUE (bloc corrigé) ══════════ -->
+<!-- ══════════ CATALOGUE NUMÉRIQUE ══════════ -->
 {% if dernier_catalogue %}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-20">
-  <div class="reveal relative rounded-xl3 overflow-hidden bg-champion-900 text-creme-50 grid md:grid-cols-2 items-center">
+  <div class="reveal relative rounded-xl3 overflow-hidden bg-nuit-900 text-creme-50 grid md:grid-cols-2 items-center">
     <div class="p-10 md:p-14">
       <span class="text-xs font-semibold uppercase tracking-widest text-mangue-500" data-fr="Catalogue du mois" data-en="Monthly catalog">Catalogue du mois</span>
-      <h2 class="font-display font-800 text-2xl md:text-3xl mt-2 mb-4">{{ dernier_catalogue.titre|default:"Découvrez toutes nos offres" }}</h2>
+      <h2 class="font-display font-800 text-2xl md:text-3xl mt-2 mb-4" data-fr="{{ dernier_catalogue.titre_fr|default:'Découvrez toutes nos offres' }}" data-en="{{ dernier_catalogue.titre_en|default:'Discover all our offers' }}">{{ dernier_catalogue.titre_fr|default:"Découvrez toutes nos offres" }}</h2>
       <p class="text-creme-100/70 text-sm mb-7 max-w-sm" data-fr="Feuilletez notre catalogue et préparez vos courses avant de venir en magasin." data-en="Browse our catalog and plan your shopping before you arrive.">
         Feuilletez notre catalogue et préparez vos courses avant de venir en magasin.
       </p>
@@ -240,30 +227,24 @@
     </div>
     <div class="relative h-56 md:h-full">
       {% if dernier_catalogue.couverture %}
-      <img src="{{ dernier_catalogue.couverture.url }}" alt="Catalogue" class="w-full h-full object-cover">
+      <img src="{{ dernier_catalogue.couverture.url }}" alt="{{ dernier_catalogue.titre_fr }}" class="w-full h-full object-cover">
       {% else %}
-      <div class="w-full h-full bg-champion-700 grid place-items-center text-champion-300 text-sm">Couverture du catalogue</div>
+      <div class="w-full h-full bg-nuit-700 grid place-items-center text-nuit-300 text-sm" data-fr="Couverture du catalogue" data-en="Catalog cover">Couverture du catalogue</div>
       {% endif %}
-      <div class="absolute inset-0 bg-gradient-to-r from-champion-900 via-champion-900/10 to-transparent md:block hidden"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-nuit-900 via-nuit-900/10 to-transparent md:block hidden"></div>
     </div>
   </div>
 </section>
 {% endif %}
 
-
-
-
-
 <!-- ══════════ TOUS NOS PRODUITS ══════════ -->
-{% if produit or produits %}
-<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-champion-800/30">
+{% if produits %}
+<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-nuit-800/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-    {% if produits %}
     <div class="flex items-end justify-between mb-8 reveal">
       <div>
         <span class="text-xs font-semibold uppercase tracking-widest text-mangue-600 dark:text-mangue-500" data-fr="La sélection Champion" data-en="The Champion selection">La sélection Champion</span>
-        <h2 class="font-display font-800 text-2xl md:text-3xl mt-1" data-fr="Tous nos produit" data-en="Our favorites">Tous nos produits</h2>
+        <h2 class="font-display font-800 text-2xl md:text-3xl mt-1" data-fr="Tous nos produits" data-en="All our products">Tous nos produits</h2>
       </div>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 mb-16">
@@ -273,55 +254,18 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %}
-
-    
-
   </div>
 </section>
 {% endif %}
-<!-- ══════════ RECETTES ══════════ -->
-{% comment %} {% if recettes_vedette %}
-<section class="py-16 md:py-20 bg-champion-50/60 dark:bg-champion-800/30">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-end justify-between mb-8 reveal">
-      <div>
-        <span class="text-xs font-semibold uppercase tracking-widest text-mangue-600 dark:text-mangue-500" data-fr="Inspirations gourmandes" data-en="Culinary inspiration">Inspirations gourmandes</span>
-        <h2 class="font-display font-800 text-2xl md:text-3xl mt-1" data-fr="Nos recettes du moment" data-en="Featured recipes">Nos recettes du moment</h2>
-      </div>
-      <a href="#" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-champion-500 hover:gap-2 transition-all" data-fr="Toutes les recettes" data-en="All recipes">Toutes les recettes →</a>
-    </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      {% for recette in recettes_vedette %}
-      <a href="{{ recette.get_absolute_url|default:'#' }}" class="reveal group rounded-xl3 overflow-hidden bg-white dark:bg-champion-800 shadow-sm hover:shadow-soft transition-all duration-300 hover:-translate-y-1" style="transition-delay: {{ forloop.counter0 }}00ms">
-        <div class="aspect-[4/3] overflow-hidden">
-          {% if recette.image %}
-          <img src="{{ recette.image.url }}" alt="{{ recette.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-          {% else %}
-          <div class="w-full h-full bg-champion-100 dark:bg-champion-700"></div>
-          {% endif %}
-        </div>
-        <div class="p-5">
-          {% if recette.temps_preparation %}
-          <span class="text-xs text-champion-400 dark:text-champion-300/70">{{ recette.temps_preparation }} min</span>
-          {% endif %}
-          <h3 class="font-display font-700 text-base mt-1 group-hover:text-champion-500 transition-colors">{{ recette.titre }}</h3>
-        </div>
-      </a>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %} {% endcomment %}
 
 <!-- ══════════ CHIFFRES CLÉS ══════════ -->
 {% if chiffres_cles %}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
   <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
     {% for chiffre in chiffres_cles %}
-    <div class="reveal p-6 rounded-xl2 bg-champion-500/5 dark:bg-champion-800/40" style="transition-delay: {{ forloop.counter0 }}00ms">
+    <div class="reveal p-6 rounded-xl2 bg-champion-500/5 dark:bg-nuit-800/60" style="transition-delay: {{ forloop.counter0 }}00ms">
       <span class="block font-display font-800 text-3xl md:text-4xl text-champion-500 dark:text-mangue-500 counter" data-target="{{ chiffre.valeur }}">0</span>
-      <span class="block text-xs md:text-sm text-champion-600 dark:text-creme-100/70 mt-2">{{ chiffre.libelle }}</span>
+      <span class="block text-xs md:text-sm text-champion-600 dark:text-white/70 mt-2" data-fr="{{ chiffre.libelle_fr }}" data-en="{{ chiffre.libelle_en }}">{{ chiffre.libelle_fr }}</span>
     </div>
     {% endfor %}
   </div>
@@ -330,7 +274,7 @@
 
 <!-- ══════════ TÉMOIGNAGES ══════════ -->
 {% if temoignages %}
-<section class="py-16 md:py-20 bg-champion-900 text-creme-100">
+<section class="py-16 md:py-20 bg-nuit-900 text-creme-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-10 reveal">
       <span class="text-xs font-semibold uppercase tracking-widest text-mangue-500" data-fr="Ils nous font confiance" data-en="They trust us">Ils nous font confiance</span>
@@ -338,7 +282,7 @@
     </div>
     <div class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
       {% for avis in temoignages %}
-      <div class="reveal w-[280px] md:w-[320px] flex-none snap-start bg-champion-800/70 rounded-xl3 p-6 border border-champion-700/50" style="transition-delay: {{ forloop.counter0 }}00ms">
+      <div class="reveal w-[280px] md:w-[320px] flex-none snap-start bg-nuit-800/70 rounded-xl3 p-6 border border-nuit-700/50" style="transition-delay: {{ forloop.counter0 }}00ms">
         <div class="flex gap-1 mb-4 text-mangue-500">
           {% for i in "12345" %}
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -347,9 +291,9 @@
         <p class="text-sm text-creme-100/85 leading-relaxed mb-5">« {{ avis.commentaire }} »</p>
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-full bg-champion-500 grid place-items-center font-display font-700 text-xs">
-            {{ avis.nom_client|slice:":1" }}
+            {{ avis.prenom|slice:":1" }}
           </div>
-          <span class="text-sm font-medium">{{ avis.nom_client }}</span>
+          <span class="text-sm font-medium">{{ avis.prenom }}</span>
         </div>
       </div>
       {% endfor %}
@@ -372,13 +316,13 @@
     <a href="{{ article.get_absolute_url|default:'#' }}" class="reveal group" style="transition-delay: {{ forloop.counter0 }}00ms">
       <div class="aspect-[16/10] rounded-xl3 overflow-hidden mb-4">
         {% if article.image %}
-        <img src="{{ article.image.url }}" alt="{{ article.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+        <img src="{{ article.image.url }}" alt="{{ article.titre_fr }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
         {% else %}
-        <div class="w-full h-full bg-champion-100 dark:bg-champion-700"></div>
+        <div class="w-full h-full bg-champion-100 dark:bg-nuit-700"></div>
         {% endif %}
       </div>
       <span class="text-xs text-champion-400">{{ article.date_publication|date:"d M Y" }}</span>
-      <h3 class="font-display font-700 text-base mt-1 group-hover:text-champion-500 transition-colors">{{ article.titre }}</h3>
+      <h3 class="font-display font-700 text-base mt-1 group-hover:text-champion-500 transition-colors" data-fr="{{ article.titre_fr }}" data-en="{{ article.titre_en }}">{{ article.titre_fr }}</h3>
     </a>
     {% endfor %}
   </div>
@@ -386,11 +330,10 @@
 {% endif %}
 
 <!-- ══════════ PARTENAIRES ══════════ -->
-<!-- ══════════ PARTENAIRES ══════════ -->
 {% if partenaires %}
-<section class="py-16 md:py-20 border-y border-champion-100 dark:border-champion-700/40 overflow-hidden">
+<section class="py-16 md:py-20 border-y border-champion-100 dark:border-nuit-600/50 overflow-hidden">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-    <p class="text-center text-xs font-semibold uppercase tracking-widest text-champion-400" data-fr="Ils nous font confiance" data-en="They trust us">
+    <p class="text-center text-xs font-semibold uppercase tracking-widest text-champion-400" data-fr="Nos partenaires" data-en="Our partners">
       Nos partenaires
     </p>
     <h2 class="font-display font-800 text-xl md:text-2xl text-center mt-1" data-fr="Des marques qui nous accompagnent" data-en="Brands that support us">
@@ -405,7 +348,6 @@
         <img src="{{ partenaire.logo.url }}" alt="{{ partenaire.nom }}" loading="lazy">
       </div>
       {% endfor %}
-      <!-- Duplication pour boucle infinie sans coupure -->
       {% for partenaire in partenaires %}
       <div class="partenaires-card" aria-hidden="true">
         <img src="{{ partenaire.logo.url }}" alt="" loading="lazy">
@@ -423,12 +365,12 @@
     {% for banniere in bannieres_bas %}
     <a href="{{ banniere.lien|default:'#' }}" class="reveal relative rounded-xl3 overflow-hidden aspect-[16/7] group">
       {% if banniere.image %}
-      <img src="{{ banniere.image.url }}" alt="{{ banniere.titre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+      <img src="{{ banniere.image.url }}" alt="{{ banniere.titre_fr }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
       {% else %}
-      <div class="w-full h-full bg-champion-200 dark:bg-champion-700"></div>
+      <div class="w-full h-full bg-champion-200 dark:bg-nuit-700"></div>
       {% endif %}
-      <div class="absolute inset-0 bg-gradient-to-t from-champion-900/70 via-champion-900/10 to-transparent flex items-end p-5">
-        <span class="text-creme-50 font-display font-700">{{ banniere.titre }}</span>
+      <div class="absolute inset-0 bg-gradient-to-t from-nuit-900/70 via-nuit-900/10 to-transparent flex items-end p-5">
+        <span class="text-creme-50 font-display font-700" data-fr="{{ banniere.titre_fr }}" data-en="{{ banniere.titre_en }}">{{ banniere.titre_fr }}</span>
       </div>
     </a>
     {% endfor %}
@@ -465,7 +407,6 @@
 
 {% block extra_scripts %}
 <script>
-  /* Compteurs animés pour les chiffres clés */
   const counters = document.querySelectorAll('.counter');
   const counterIO = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

@@ -29,13 +29,15 @@
   <div class="bg-champion-500 text-creme-50 overflow-hidden">
     <div class="flex whitespace-nowrap py-1.5 animate-marquee">
       {% for promo in promotions_actives %}
-        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2">
+        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2"
+              data-fr="{{ promo.titre_fr }}" data-en="{{ promo.titre_en }}">
           <span class="w-1.5 h-1.5 rounded-full bg-mangue-500"></span>
           {{ promo.titre }}
         </span>
       {% endfor %}
       {% for promo in promotions_actives %}
-        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2" aria-hidden="true">
+        <span class="mx-6 text-xs font-medium tracking-wide flex items-center gap-2" aria-hidden="true"
+              data-fr="{{ promo.titre_fr }}" data-en="{{ promo.titre_en }}">
           <span class="w-1.5 h-1.5 rounded-full bg-mangue-500"></span>
           {{ promo.titre }}
         </span>
